@@ -26,17 +26,26 @@ def get_var(col):
     """
     return col.var()
 
-def plot_hist(col,model=None,fname=None,indx=0):
+def plot_hist(col,model=None,fname=None):
     """
     Histogram of values in a column
 
     """
-    plt.figure(indx)
+    plt.figure()
     col.hist(bins=100)
     plt.xlabel('G(z) - Test Image Cosine Distance')
     plt.ylabel('Count')
     plt.xlim(0,2)
     plt.savefig('viz/{}_{}.png'.format(model.upper(),fname))
+    plt.close()
+
+
+def generate_box_plot(df):
+    """
+    Box plot
+
+    """
+    return df.plot.box()
 
 
 

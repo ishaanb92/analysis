@@ -17,7 +17,7 @@ def read_file(model):
     df = pd.read_csv(file_path)
     return df
 
-def generate_stats(df,model,indx):
+def generate_stats(df,model):
 
     # Mean
     mean_test_inp_dist = get_mean(col=df['Test-Gz Cosine'])
@@ -31,14 +31,33 @@ def generate_stats(df,model,indx):
     print('{} Train-Gz Cosine :: Mean= {}  Var = {}'.format(model.upper(),mean_train_inp_dist,var_train_inp_dist))
 
     # Histogram
-    plot_hist(col=df['Test-Gz Cosine'],model=model,fname='test_inp')
-    plot_hist(col=df['Train-Gz Cosine'],model=model,fname='train_inp')
+    plot_hist(col=df['Test-Gz Cosine'],model=model,fname='test_inp_hist')
+    plot_hist(col=df['Train-Gz Cosine'],model=model,fname='train_inp_hist')
+
+def create_box_plot(df_list,mode='test'):
+
+    """
+    Takes a list of dataframes for different models
+    Creates box plots for test/train -- G(z) cosine distance
+    values
+
+    """
+    col_list = []
+    for df in df_list:
+        col_list.append(df['Test-Gz Cosine'])
+
+    df_concat = pd.concat(col_list,axis=1)
+    df_concat.columns = models
+    ax = generate_box_plot(df_concat)
+    plt.show()
 
 
 
 if __name__ == '__main__':
-    indx = 0
+    df_list = []
     for model in models:
         df = read_file(model)
-        generate_stats(df=df,model=model,indx=indx)
-        indx+=2
+        df_list.append(df)
+        generate_stats(df=df,model=model)
+
+    create_box_plot(df_list)
