@@ -26,7 +26,7 @@ def get_var(col):
     """
     return col.var()
 
-def plot_hist(col,model=None,fname=None):
+def plot_hist(col,fname=None):
     """
     Histogram of values in a column
 
@@ -36,16 +36,20 @@ def plot_hist(col,model=None,fname=None):
     plt.xlabel('G(z) - Test Image Cosine Distance')
     plt.ylabel('Count')
     plt.xlim(0,2)
-    plt.savefig('viz/{}_{}.png'.format(model.upper(),fname))
+    plt.savefig(fname)
     plt.close()
 
 
-def generate_box_plot(df):
+def generate_box_plot(df,fname):
     """
     Box plot
 
     """
-    return df.plot.box()
+    plt.figure()
+    ax=df.plot.box()
+    ax.set_title('Box Plot for G(z)-Test embedding cosine distances')
+    plt.savefig(fname)
+
 
 
 
