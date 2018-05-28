@@ -43,12 +43,29 @@ def create_box_plot(df_list,mode='test',root_dir=None):
 
     """
     col_list = []
-    for df in df_list:
-        col_list.append(df['Test-Gz Cosine'])
+    if mode == 'test':
+        for df in df_list:
+            col_list.append(df['Test-Gz Cosine'])
+    else:
+        for df in df_list:
+            col_list.append(df['Train-Gz Cosine'])
+
 
     df_concat = pd.concat(col_list,axis=1)
     df_concat.columns = models
-    generate_box_plot(df_concat,fname=os.path.join(root_dir,'box_plot.png'))
+    generate_box_plot(df_concat,fname=os.path.join(root_dir,'{}_box_plot.png'.format(mode)),mode=mode)
+
+    # Homegenity tests
+    if mode == 'test':
+        print('Homegenity tests for DCGAN/DCGAN-GP')
+        check_homegenity(df_concat['dcgan'],df_concat['dcgan-gp'])
+        print('Homegenity tests for WGAN/WGAN-GP')
+        check_homegenity(df_concat['wgan'],df_concat['wgan-gp'])
+        print('Homegenity tests for DCGAN/DRAGAN')
+        check_homegenity(df_concat['dcgan'],df_concat['dragan'])
+        print('Homegenity tests for DCGAN/DCGAN-CONS')
+        check_homegenity(df_concat['dcgan'],df_concat['dcgan-cons'])
+
 
 
 
@@ -60,4 +77,6 @@ if __name__ == '__main__':
         df_list.append(df)
         generate_stats(df=df,model=model,root_dir=root_dir)
 
-    create_box_plot(df_list,root_dir=root_dir)
+    create_box_plot(df_list,mode = 'test',root_dir=root_dir)
+    create_box_plot(df_list,mode = 'train',root_dir=root_dir)
+
