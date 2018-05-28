@@ -5,6 +5,11 @@ import os
 from stats import *
 
 
+"""
+Script to calculate stats/plots for 3-emb experiment
+
+"""
+
 
 
 def build_parser():
@@ -17,7 +22,7 @@ def read_file(model):
     df = pd.read_csv(file_path)
     return df
 
-def generate_stats(df,model,root_dir):
+def calculate_stats(df,model,root_dir):
 
     # Mean
     mean_test_inp_dist = get_mean(col=df['Test-Gz Cosine'])
@@ -75,7 +80,7 @@ if __name__ == '__main__':
     for model in models:
         df = read_file(model)
         df_list.append(df)
-        generate_stats(df=df,model=model,root_dir=root_dir)
+        calculate_stats(df=df,model=model,root_dir=root_dir)
 
     create_box_plot(df_list,mode = 'test',root_dir=root_dir)
     create_box_plot(df_list,mode = 'train',root_dir=root_dir)

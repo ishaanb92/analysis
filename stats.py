@@ -45,14 +45,17 @@ def plot_hist(col,fname=None):
     plt.close()
 
 
-def generate_box_plot(df,fname,mode):
+def generate_box_plot(df,fname,mode=None):
     """
     Box plot
 
     """
     plt.figure()
     ax=df.plot.box()
-    ax.set_title('Box Plot for G(z)-{} embedding cosine distances'.format(mode))
+    if mode == None:
+        ax.set_title('Box plot for Inpainting-Original embedding cosine distances')
+    else:
+        ax.set_title('Box Plot for G(z)-{} embedding cosine distances'.format(mode))
     plt.savefig(fname)
 
 def check_homegenity(col1,col2):
