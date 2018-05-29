@@ -62,18 +62,22 @@ def create_box_plot(df_list,mode='test',root_dir=None):
 
     # Homegenity tests
     if mode == 'test':
-        print('Homegenity tests for DCGAN/DCGAN-GP')
-        check_homegenity(df_concat['dcgan'],df_concat['dcgan-gp'])
-        print('Homegenity tests for WGAN/WGAN-GP')
-        check_homegenity(df_concat['wgan'],df_concat['wgan-gp'])
-        print('Homegenity tests for DCGAN/DRAGAN (With BN)')
-        check_homegenity(df_concat['dcgan'],df_concat['dragan'])
-        print('Homegenity tests for DCGAN/DRAGAN (No BN)')
-        check_homegenity(df_concat['dcgan'],df_concat['dragan_no_bn'])
-        print('Homegenity tests for DRAGAN(With BN)/DRAGAN (No BN)')
-        check_homegenity(df_concat['dragan'],df_concat['dragan_no_bn'])
-        print('Homegenity tests for DCGAN/DCGAN-CONS')
-        check_homegenity(df_concat['dcgan'],df_concat['dcgan-cons'])
+        print ('### Homogenity test for G(z) - Test Image distances ###')
+    else:
+        print('### Homogenity test for G(z) - Closest Training  Image distances ###')
+
+    print('Homegenity tests for DCGAN/DCGAN-GP')
+    check_homegenity(df_concat['dcgan'],df_concat['dcgan-gp'])
+    print('Homegenity tests for WGAN/WGAN-GP')
+    check_homegenity(df_concat['wgan'],df_concat['wgan-gp'])
+    print('Homegenity tests for DCGAN/DRAGAN (With BN)')
+    check_homegenity(df_concat['dcgan'],df_concat['dragan'])
+    print('Homegenity tests for DCGAN/DRAGAN (No BN)')
+    check_homegenity(df_concat['dcgan'],df_concat['dragan_no_bn'])
+    print('Homegenity tests for DRAGAN(With BN)/DRAGAN (No BN)')
+    check_homegenity(df_concat['dragan'],df_concat['dragan_no_bn'])
+    print('Homegenity tests for DCGAN/DCGAN-CONS')
+    check_homegenity(df_concat['dcgan'],df_concat['dcgan-cons'])
 
 
 

@@ -57,6 +57,7 @@ def generate_box_plot(df,fname,mode=None):
     else:
         ax.set_title('Box Plot for G(z)-{} embedding cosine distances'.format(mode))
     plt.savefig(fname)
+    plt.close()
 
 def check_homegenity(col1,col2):
 
