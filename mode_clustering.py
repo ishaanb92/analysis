@@ -51,6 +51,9 @@ def cluster(model):
         # Compute sil scores
         sil_scores.append(silhouette_score(X=embs,labels=kmeans.labels_))
 
+    # Silhoutte Scores : Near 1 --> Well separated clusters
+    #                    Near 0 --> Overlapping clusters
+
     x_axis = [i for i in range(2,11)]
     plt.figure()
     plt.plot(x_axis,sil_scores)
