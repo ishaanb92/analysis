@@ -2,6 +2,8 @@ import os,pickle
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.metrics.pairwise import pairwise_distances
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
 from stats import *
 import matplotlib.pyplot as plt
 
@@ -21,10 +23,10 @@ def sanity_checks(model):
     #emb_red = pca.transform(embs)
     #print('{} :: Original Shape : {} PCA Reduction : {}'.format(model.upper(),embs.shape,emb_red.shape))
 
-    # Create histogram of pair-wise distances
-    return create_pairwise_hist(X=embs,model=model)
+    # Create box-plot of pair-wise distances
+    return create_pairwise_box_plot(X=embs,model=model)
 
-def create_pairwise_hist(X,model):
+def create_pairwise_box_plot(X,model):
     """
     Given an array of vectors X, calculate pair-wise distances
 
@@ -36,32 +38,46 @@ def create_pairwise_hist(X,model):
         for j in range(i):
             remove_duplicates.append(distance_matrix[i][j])
 
-
-    plt.figure()
-    plt.hist(x=np.asarray(remove_duplicates),bins=100)
-    plt.savefig('{}_distance_hist.png'.format(model.lower()))
-    plt.close()
-
     return np.asarray(remove_duplicates)
 
-if __name__ == '__main__':
+def cluster(model):
+    emb_dict = read_dict(model)
+    embs = np.array(list(emb_dict.values()))
 
+    sil_scores = []
+    for n_clus in range(2,11): # Increase cluster size from 1-10
+        kmeans = KMeans(n_clusters = n_clus)
+        kmeans.fit(embs)
+        # Compute sil scores
+        sil_scores.append(silhouette_score(X=embs,labels=kmeans.labels_))
+
+    x_axis = [i for i in range(2,11)]
+    plt.figure()
+    plt.plot(x_axis,sil_scores)
+    plt.xlabel('Number of clusters')
+    plt.ylabel('Silhoutte Score')
+    plt.savefig('viz/{}_cluster_scores.png'.format(model.lower()))
+    plt.close()
+
+
+def do_sanity():
     pair_wise = []
     for model in models:
         distance_array = sanity_checks(model)
         pair_wise.append(distance_array)
 
     pair_wise = np.array(pair_wise)
-    print(pair_wise.shape)
     pair_wise_t = np.transpose(pair_wise)
-    print(pair_wise_t.shape)
-
-
 
     df = pd.DataFrame(data=pair_wise_t,columns=models)
     plt.figure()
     df.plot.box(figsize=(10,10))
-    plt.savefig('pairwise_box.png')
+    plt.savefig('viz/pairwise_box_gz.png')
     plt.close()
+
+if __name__ == '__main__':
+    for model in models:
+        cluster(model)
+
 
 
