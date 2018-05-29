@@ -14,7 +14,7 @@ Python module to calculate statistics for all experiments
 
 """
 
-models = ['dcgan','dcgan-gp','wgan','wgan-gp','dragan','dcgan-cons']
+models = ['dcgan','dcgan-gp','wgan','wgan-gp','dragan','dragan_no_bn','dcgan-cons']
 
 
 def get_mean(col):
@@ -51,7 +51,7 @@ def generate_box_plot(df,fname,mode=None):
 
     """
     plt.figure()
-    ax=df.plot.box()
+    ax=df.plot.box(figsize=(10,10))
     if mode == None:
         ax.set_title('Box plot for Inpainting-Original embedding cosine distances')
     else:
