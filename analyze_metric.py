@@ -35,6 +35,10 @@ def calculate_stats(df,root_dir):
     check_homegenity(df_concat['WGAN'],df_concat['WGAN-GP'])
     print('Homegenity tests for DCGAN/DRAGAN')
     check_homegenity(df_concat['DCGAN'],df_concat['DRAGAN'])
+    print('Homegenity tests for DCGAN/DRAGAN (No BN)')
+    check_homegenity(df_concat['DCGAN'],df_concat['DRAGAN (No BN)'])
+    print('Homegenity tests for DRAGAN/DRAGAN (No BN)')
+    check_homegenity(df_concat['DRAGAN'],df_concat['DRAGAN (No BN)'])
     print('Homegenity tests for DCGAN/DCGAN-CONS')
     check_homegenity(df_concat['DCGAN'],df_concat['DCGAN-CONS'])
 
