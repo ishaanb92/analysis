@@ -51,7 +51,7 @@ def generate_box_plot(df,fname,mode=None):
 
     """
     plt.figure()
-    ax=df.plot.box(figsize=(10,10))
+    ax=df.plot.box(figsize=(12,12))
     if mode == None:
         ax.set_title('Box plot for Inpainting-Original embedding cosine distances')
     else:
