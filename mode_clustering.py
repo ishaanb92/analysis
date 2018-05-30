@@ -32,7 +32,7 @@ def create_pairwise_box_plot(X,model):
 
     """
     remove_duplicates = []
-    distance_matrix = pairwise_distances(X,metric='cosine')
+    distance_matrix = pairwise_distances(X,metric='euclidean')
 
     for i in range(distance_matrix.shape[0]):
         for j in range(i):
@@ -57,6 +57,7 @@ def cluster(model):
     x_axis = [i for i in range(2,11)]
     plt.figure()
     plt.plot(x_axis,sil_scores)
+    plt.ylim(0,1)
     plt.xlabel('Number of clusters')
     plt.ylabel('Silhoutte Score')
     plt.savefig('viz/{}_cluster_scores.png'.format(model.lower()))
