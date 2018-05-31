@@ -14,7 +14,7 @@ Python module to calculate statistics for all experiments
 
 """
 
-models = ['dcgan','dcgan-gp','wgan','wgan-gp','dragan','dragan_no_bn','dcgan-cons']
+models = ['dcgan','dcgan-gp','dcgan_sim','wgan','wgan-gp','dragan','dragan_no_bn','dcgan-cons']
 
 
 def get_mean(col):

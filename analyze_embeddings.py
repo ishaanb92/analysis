@@ -68,6 +68,8 @@ def create_box_plot(df_list,mode='test',root_dir=None):
 
     print('Homegenity tests for DCGAN/DCGAN-GP')
     check_homegenity(df_concat['dcgan'],df_concat['dcgan-gp'])
+    print('Homegenity tests for DCGAN/DCGAN_SIM')
+    check_homegenity(df_concat['dcgan'],df_concat['dcgan_sim'])
     print('Homegenity tests for WGAN/WGAN-GP')
     check_homegenity(df_concat['wgan'],df_concat['wgan-gp'])
     print('Homegenity tests for DCGAN/DRAGAN (With BN)')
