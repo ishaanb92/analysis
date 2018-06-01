@@ -59,12 +59,19 @@ def pairwise_analysis(root_dir):
     plt.close()
 
 
-def cluster(root_dir,model):
+def cluster(root_dir,model,dim_red=True):
     """
     Measures number of clusters using the silhouette score
 
     """
     embs = read_gz_dict(model=model)
+
+    if dim_red is True:
+        pca = PCA(n_components=5)
+        embs = pca.fit_transform(embs)
+        root_dir = root_dir + '_reduce'
+        if os.path.exists(root_dir) is False:
+            os.makedirs(root_dir)
 
     sil_scores = []
     for n_clus in range(2,11): # Increase cluster size from 1-10
@@ -100,7 +107,7 @@ if __name__ == '__main__':
     pairwise_analysis(pairwise_root)
 
     for model in models:
-        cluster(cluster_root,model)
+        cluster(cluster_root,model,dim_red=True)
 
 
 
