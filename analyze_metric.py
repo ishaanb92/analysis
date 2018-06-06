@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from stats import *
+from argparse import ArgumentParser
 
 
 """
@@ -35,10 +36,10 @@ def calculate_stats(df,root_dir):
     check_homegenity(df_concat['WGAN'],df_concat['WGAN-GP'])
     print('Homegenity tests for DCGAN/DRAGAN')
     check_homegenity(df_concat['DCGAN'],df_concat['DRAGAN'])
-    print('Homegenity tests for DCGAN/DRAGAN (No BN)')
-    check_homegenity(df_concat['DCGAN'],df_concat['DRAGAN_NO_BN'])
-    print('Homegenity tests for DRAGAN/DRAGAN (No BN)')
-    check_homegenity(df_concat['DRAGAN'],df_concat['DRAGAN_NO_BN'])
+    print('Homegenity tests for DCGAN/DRAGAN (With BN)')
+    check_homegenity(df_concat['DCGAN'],df_concat['DRAGAN_BN'])
+    print('Homegenity tests for DRAGAN/DRAGAN (With BN)')
+    check_homegenity(df_concat['DRAGAN'],df_concat['DRAGAN_BN'])
     print('Homegenity tests for DCGAN/DCGAN-CONS')
     check_homegenity(df_concat['DCGAN'],df_concat['DCGAN-CONS'])
     print('Homegenity tests for DCGAN/DCGAN-SIM')
@@ -48,17 +49,15 @@ def calculate_stats(df,root_dir):
 
 
 if __name__ == '__main__':
-    root_dir = os.path.join(os.getcwd(),'viz','metric')
+    parser = ArgumentParser()
+    parser.add_argument('--run',type=str,help='Run x of experiment',default='1')
+    args = parser.parse_args()
+
+    root_dir = os.path.join(os.getcwd(),'viz','run_{}'.format(str(args.run)),'metric')
     if os.path.exists(root_dir) is False:
         os.makedirs(root_dir)
 
     # Merge BN and non-BN data-frames (for DRAGAN column)
-    df = pd.read_csv('/home/fungii/thesis_code/celebA_metric_results/gan_distances.csv')
-    df_no_bn = pd.read_csv('/home/fungii/thesis_code/celebA_metric_results/gan_distances_sanity.csv')
-    df_sim = pd.read_csv('/home/fungii/thesis_code/celebA_metric_results/gan_distances_sim.csv')
-    df_rename_sim = df_sim.rename(columns={"DCGAN":"DCGAN_SIM"})
-    df_rename = df_no_bn.rename(columns={"DRAGAN":"DRAGAN_NO_BN"})
-    df_concat = pd.concat([df,df_rename["DRAGAN_NO_BN"],df_rename_sim["DCGAN_SIM"]],axis=1)
-
-    calculate_stats(df=df_concat,root_dir=root_dir)
+    df = pd.read_csv(os.path.join('/home/fungii/thesis_code/celebA_metric_results','run_{}'.format(str(args.run)),'gan_distances.csv'))
+    calculate_stats(df=df,root_dir=root_dir)
 
