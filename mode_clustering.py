@@ -6,18 +6,19 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from stats import *
 import matplotlib.pyplot as plt
+from argparse import ArgumentParser
 
 
-def read_gz_dict(model):
+def read_gz_dict(model,run):
 
-    with open(os.path.join(os.getcwd(),'viz','embeddings','{}_emb_dict.pkl'.format(model.lower())),'rb') as f:
+    with open(os.path.join(os.getcwd(),'viz','run_{}'.format(run),'embeddings','{}_emb_dict.pkl'.format(model.lower())),'rb') as f:
         gz_dict = pickle.load(f)
         return np.array(list(gz_dict.values()))
 
 
-def read_train_dict(model):
+def read_train_dict(model,run):
 
-    with open(os.path.join(os.getcwd(),'viz','{}_embedding'.format(model.upper()),'closest_train_emb.pkl'),'rb') as f:
+    with open(os.path.join(os.getcwd(),'viz','run_{}'.format(run),'{}_embedding'.format(model.upper()),'closest_train_emb.pkl'),'rb') as f:
         train_emb_dict =  pickle.load(f)
         return np.array(list(train_emb_dict.values()))
 
@@ -37,7 +38,7 @@ def compute_pairwise_distances(X,model):
 
     return np.asarray(remove_duplicates)
 
-def pairwise_analysis(root_dir):
+def pairwise_analysis(root_dir,run):
     """
     Creates a box plot of pair-wise distances between the
     closest training image enbeddings found for all models
@@ -46,7 +47,7 @@ def pairwise_analysis(root_dir):
     pair_wise = []
     for model in models:
 
-        distance_array = compute_pairwise_distances(read_gz_dict(model),model)
+        distance_array = compute_pairwise_distances(read_gz_dict(model,run),model)
         pair_wise.append(distance_array)
 
     pair_wise = np.array(pair_wise)
@@ -59,12 +60,12 @@ def pairwise_analysis(root_dir):
     plt.close()
 
 
-def cluster(root_dir,model,dim_red=True):
+def cluster(root_dir,model,run,dim_red=True):
     """
     Measures number of clusters using the silhouette score
 
     """
-    embs = read_gz_dict(model=model)
+    embs = read_gz_dict(model=model,run=run)
 
     if dim_red is True:
         pca = PCA(n_components=5)
@@ -74,7 +75,7 @@ def cluster(root_dir,model,dim_red=True):
             os.makedirs(root_dir)
 
     sil_scores = []
-    for n_clus in range(2,11): # Increase cluster size from 1-10
+    for n_clus in range(2,11): # Increase cluster size from 2-10
         kmeans = KMeans(n_clusters = n_clus)
         kmeans.fit(embs)
         # Compute sil scores
@@ -95,8 +96,12 @@ def cluster(root_dir,model,dim_red=True):
 
 
 if __name__ == '__main__':
-    pairwise_root = os.path.join(os.getcwd(),'viz','pairwise')
-    cluster_root = os.path.join(os.getcwd(),'viz','cluster')
+    parser = ArgumentParser()
+    parser.add_argument('--run',type=str,help='Experiment #')
+    args = parser.parse_args()
+
+    pairwise_root = os.path.join(os.getcwd(),'viz','run_{}'.format(args.run),'pairwise')
+    cluster_root = os.path.join(os.getcwd(),'viz','run_{}'.format(args.run),'cluster')
 
     if os.path.exists(pairwise_root) is False:
         os.makedirs(pairwise_root)
@@ -104,10 +109,10 @@ if __name__ == '__main__':
     if os.path.exists(cluster_root) is False:
         os.makedirs(cluster_root)
 
-    pairwise_analysis(pairwise_root)
+    pairwise_analysis(pairwise_root,args.run)
 
     for model in models:
-        cluster(cluster_root,model,dim_red=True)
+        cluster(cluster_root,model,args.run,dim_red=True)
 
 
 

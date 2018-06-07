@@ -87,7 +87,12 @@ def create_box_plot(df_list,mode='test',root_dir=None):
 if __name__ == '__main__':
     args = build_parser()
     root_dir = os.path.join(os.getcwd(),'viz','run_{}'.format(args.run),'embeddings')
+
+    if os.path.exists(root_dir) is False:
+        os.makedirs(root_dir)
+
     df_list = []
+
     for model in models:
         df = read_file(model,args.run)
         df_list.append(df)
