@@ -113,6 +113,7 @@ if __name__ == '__main__':
 
     for model in models:
         cluster(cluster_root,model,args.run,dim_red=True)
+        cluster(cluster_root,model,args.run,dim_red=False)
 
 
 
