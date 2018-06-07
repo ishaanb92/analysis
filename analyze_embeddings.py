@@ -14,11 +14,11 @@ Script to calculate stats/plots for 3-emb experiment
 
 def build_parser():
     parser = ArgumentParser()
-    parser.add_argument('--model',type=str,help='GAN model : DCGAN/WGAN/...',required=True)
-    return parser
+    parser.add_argument('--run',type=str,help='Experiment run #',required=True)
+    return parser.parse_args()
 
-def read_file(model):
-    file_path = os.path.join(os.getcwd(),'viz','{}_embedding'.format(model.upper()),'emb_results_recall.csv')
+def read_file(model,run):
+    file_path = os.path.join(os.getcwd(),'viz','run_{}'.format(run),'{}_embedding'.format(model.upper()),'emb_results_recall.csv')
     df = pd.read_csv(file_path)
     return df
 
@@ -75,9 +75,9 @@ def create_box_plot(df_list,mode='test',root_dir=None):
     print('Homegenity tests for DCGAN/DRAGAN (With BN)')
     check_homegenity(df_concat['dcgan'],df_concat['dragan'])
     print('Homegenity tests for DCGAN/DRAGAN (No BN)')
-    check_homegenity(df_concat['dcgan'],df_concat['dragan_no_bn'])
-    print('Homegenity tests for DRAGAN(With BN)/DRAGAN (No BN)')
-    check_homegenity(df_concat['dragan'],df_concat['dragan_no_bn'])
+    check_homegenity(df_concat['dcgan'],df_concat['dragan_bn'])
+    print('Homegenity tests for DRAGAN /DRAGAN (With BN)')
+    check_homegenity(df_concat['dragan'],df_concat['dragan_bn'])
     print('Homegenity tests for DCGAN/DCGAN-CONS')
     check_homegenity(df_concat['dcgan'],df_concat['dcgan-cons'])
 
@@ -85,10 +85,11 @@ def create_box_plot(df_list,mode='test',root_dir=None):
 
 
 if __name__ == '__main__':
-    root_dir = os.path.join(os.getcwd(),'viz','embeddings')
+    args = build_parser()
+    root_dir = os.path.join(os.getcwd(),'viz','run_{}'.format(args.run),'embeddings')
     df_list = []
     for model in models:
-        df = read_file(model)
+        df = read_file(model,args.run)
         df_list.append(df)
         calculate_stats(df=df,model=model,root_dir=root_dir)
 
