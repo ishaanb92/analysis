@@ -50,19 +50,21 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None):
     return mean_dict
 
 
+def analyze_metric(run,draw=False,log_file=None):
 
+    root_dir = os.path.join(os.getcwd(),'viz','run_{}'.format(str(args.run)),'metric')
+    if os.path.exists(root_dir) is False:
+        os.makedirs(root_dir)
 
+    df = pd.read_csv(os.path.join('/home/fungii/thesis_code/celebA_metric_results','run_{}'.format(str(args.run)),'gan_distances.csv'))
+
+    calculate_metric_stats(df=df,root_dir=root_dir,draw=draw,log_file=log_file)
 
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--run',type=str,help='Run x of experiment',default='1')
     args = parser.parse_args()
 
-    root_dir = os.path.join(os.getcwd(),'viz','run_{}'.format(str(args.run)),'metric')
-    if os.path.exists(root_dir) is False:
-        os.makedirs(root_dir)
+    analyze_metric(run=args.run,draw=True)
 
-    # Merge BN and non-BN data-frames (for DRAGAN column)
-    df = pd.read_csv(os.path.join('/home/fungii/thesis_code/celebA_metric_results','run_{}'.format(str(args.run)),'gan_distances.csv'))
-    calculate_metric_stats(df=df,root_dir=root_dir)
 
