@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from stats import *
-
+import math
 
 """
 Script to calculate stats/plots for 3-emb experiment
@@ -28,12 +28,14 @@ def calculate_stats(df,model,root_dir):
     mean_test_inp_dist = get_mean(col=df['Test-Gz Cosine'])
     mean_train_inp_dist = get_mean(col=df['Train-Gz Cosine'])
 
+    mean_gap = math.fabs(mean_test_inp_dist-mean_train_inp_dist)
     # Variance
     var_test_inp_dist = get_var(col=df['Test-Gz Cosine'])
     var_train_inp_dist = get_var(col=df['Train-Gz Cosine'])
 
     print('{} Test-Gz Cosine :: Mean= {}  Var = {}'.format(model.upper(),mean_test_inp_dist,var_test_inp_dist))
     print('{} Train-Gz Cosine :: Mean= {}  Var = {}'.format(model.upper(),mean_train_inp_dist,var_train_inp_dist))
+    print('{} Mean gap : {}'.format(model.upper(),mean_gap))
 
     # Histogram
     plot_hist(col=df['Test-Gz Cosine'],fname=os.path.join(root_dir,'{}_test_inp_hist.png'.format(model.upper())))

@@ -17,6 +17,16 @@ Python module to calculate statistics for all experiments
 models = ['dcgan','dcgan-gp','dcgan_sim','wgan','wgan-gp','dragan','dragan_bn','dcgan-cons']
 
 
+def generate_pairs():
+
+    pairs = []
+    for model,idx in zip(models,range(len(models))):
+        for i in range(idx+1,len(models)):
+            pair = [model,models[i]]
+            pairs.append(pair)
+
+    return pairs
+
 def get_mean(col):
     """
     Takes in an np array/df column and calculates mean
@@ -59,7 +69,7 @@ def generate_box_plot(df,fname,mode=None):
     plt.savefig(fname)
     plt.close()
 
-def check_homegenity(col1,col2):
+def check_homegenity(col1,col2,verbose=False):
 
     """
     Check whether distances computed for 2 models
@@ -68,39 +78,58 @@ def check_homegenity(col1,col2):
     """
     if check_normality(col1) == True and check_normality(col2) == True:
         # Check homogenity for variances -- bartlett
-        print('Performing bartlett test for equal variances')
+        if verbose is True:
+            print('Performing bartlett test for equal variances')
         _,p = bartlett(col1,col2)
         if p > 0.05: # Variances equal
-            print('T-test with equal variances')
+            if verbose is True:
+                print('T-test with equal variances')
             _,p = ttest_ind(col1,col2,equal_var=True)
         else:
-            print('T-test with unequal variances')
+            if verbose is True:
+                print('T-test with unequal variances')
             _,p = ttest_ind(col1,col2,equal_var=False)
 
         if p > 0.05:
-            print('Distributions are homogenous')
+            if verbose is True:
+                print('Distributions are homogenous')
+            return True
         else:
-            print('Distributions are not homogenous')
+            if verbose is True:
+                print('Distributions are not homogenous')
+            return False
 
 
     else:
         # Check homegenity for variances -- levene
-        print('Performing levene test for equal variances')
+        if verbose is True:
+            print('Performing levene test for equal variances')
         _,p = levene(col1,col2)
         if p > 0.05:
-            print('Performing Mann-Whitney U test for equality of medians')
+            if verbose is True:
+                print('Performing Mann-Whitney U test for equality of medians')
             _,p = mannwhitneyu(col1,col2)
             if p > 0.05:
-                print('Distributions are homogenous')
+                if verbose is True:
+                    print('Distributions are homogenous')
+                return True
             else:
-                print('Distributions are not homogenous')
+                if verbose is True:
+                    print('Distributions are not homogenous')
+                return False
         else:
-            print('Variances for non-normal data are not equal')
+            if verbose is True:
+                print('Variances for non-normal data are not equal')
             _,p = mannwhitneyu(col1,col2)
             if p > 0.05:
-                print('Distributions are homogenous')
+                if verbose is True:
+                    print('Distributions are homogenous')
+                return True
             else:
-                print('Distributions are not homogenous')
+                if verbose is True:
+                    print('Distributions are not homogenous')
+                return False
+
 
 
 
