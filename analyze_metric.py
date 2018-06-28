@@ -27,7 +27,7 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None):
     for col in df_concat.columns:
         mean_dict[col] = get_mean(df[col])
         if log_file is not None:
-            log_file.write('{} :: Mean = {} Var = {}'.format(col,mean_dict[col],get_var(df[col])))
+            log_file.write('{} :: Mean = {} Var = {}\n'.format(col,mean_dict[col],get_var(df[col])))
         else:
             print('{} :: Mean = {} Var = {}'.format(col,mean_dict[col],get_var(df[col])))
 
@@ -43,7 +43,7 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None):
     for pair in pairs:
         if check_homegenity(df_concat[pair[0].upper()],df_concat[pair[1].upper()]) is True:
             if log_file is not None:
-                log_file.write('Distances computed for models {} and {} are homogenous'.format(pair[0].upper(),pair[1].upper()))
+                log_file.write('Distances computed for models {} and {} are homogenous\n'.format(pair[0].upper(),pair[1].upper()))
             else:
                 print('Distances computed for models {} and {} are homogenous'.format(pair[0].upper(),pair[1].upper()))
 
@@ -52,11 +52,11 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None):
 
 def analyze_metric(run,draw=False,log_file=None):
 
-    root_dir = os.path.join(os.getcwd(),'viz','run_{}'.format(str(args.run)),'metric')
+    root_dir = os.path.join(os.getcwd(),'viz','run_{}'.format(run),'metric')
     if os.path.exists(root_dir) is False:
         os.makedirs(root_dir)
 
-    df = pd.read_csv(os.path.join('/home/fungii/thesis_code/celebA_metric_results','run_{}'.format(str(args.run)),'gan_distances.csv'))
+    df = pd.read_csv(os.path.join('/home/fungii/thesis_code/celebA_metric_results','run_{}'.format(run),'gan_distances.csv'))
 
     calculate_metric_stats(df=df,root_dir=root_dir,draw=draw,log_file=log_file)
 

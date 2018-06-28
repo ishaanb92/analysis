@@ -80,7 +80,7 @@ def create_histogram(col,model,root_dir,mode='test'):
 
 def analyze_embeddings(run,draw=False,log_file=None):
 
-    root_dir = os.path.join(os.getcwd(),'viz','run_{}'.format(args.run),'embeddings')
+    root_dir = os.path.join(os.getcwd(),'viz','run_{}'.format(run),'embeddings')
 
     if os.path.exists(root_dir) is False:
         os.makedirs(root_dir)
@@ -93,7 +93,7 @@ def analyze_embeddings(run,draw=False,log_file=None):
     for model in models:
         mean_gap = math.fabs(dist_means_test[model]-dist_means_train[model])
         if log_file is not None:
-            log_file.write('{} :: test-gz mean distance : {} train-gz distance : {} mean gap : {}'.format(model.upper(),dist_means_test[model],dist_means_train[model],mean_gap))
+            log_file.write('{} :: test-gz mean distance : {} train-gz distance : {} mean gap : {} \n'.format(model.upper(),dist_means_test[model],dist_means_train[model],mean_gap))
         else:
             print('{} :: test-gz mean distance : {} train-gz distance : {} mean gap : {}'.format(model.upper(),dist_means_test[model],dist_means_train[model],mean_gap))
 
@@ -103,13 +103,13 @@ def analyze_embeddings(run,draw=False,log_file=None):
     for pair in pairs:
         if check_homegenity(df_test[pair[0]],df_test[pair[1]]) is True:
             if log_file is not None:
-                log_file.write('Test-Gz distances computed for models {} and {} are homogenous'.format(pair[0].upper(),pair[1].upper()))
+                log_file.write('Test-Gz distances computed for models {} and {} are homogenous\n'.format(pair[0].upper(),pair[1].upper()))
             else:
                 print('Test-Gz distances computed for models {} and {} are homogenous'.format(pair[0].upper(),pair[1].upper()))
 
         if check_homegenity(df_train[pair[0]],df_train[pair[1]]) is True:
             if log_file is not None:
-                log_file.write('Train-Gz distances computed for models {} and {} are homogenous'.format(pair[0].upper(),pair[1].upper()))
+                log_file.write('Train-Gz distances computed for models {} and {} are homogenous\n'.format(pair[0].upper(),pair[1].upper()))
             else:
                 print('Train-Gz distances computed for models {} and {} are homogenous'.format(pair[0].upper(),pair[1].upper()))
 
