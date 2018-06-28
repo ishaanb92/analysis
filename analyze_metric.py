@@ -25,11 +25,11 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None):
 
     # Mean/Var
     for col in df_concat.columns:
-        mean_dict[col] = get_mean(df[col])
+        mean_dict[col.lower()] = get_mean(df[col])
         if log_file is not None:
-            log_file.write('{} :: Mean = {} Var = {}\n'.format(col,mean_dict[col],get_var(df[col])))
+            log_file.write('{} :: Mean = {} Var = {}\n'.format(col,mean_dict[col.lower()],get_var(df[col])))
         else:
-            print('{} :: Mean = {} Var = {}'.format(col,mean_dict[col],get_var(df[col])))
+            print('{} :: Mean = {} Var = {}'.format(col,mean_dict[col.lower()],get_var(df[col])))
 
         plot_hist(col=df[col],fname=os.path.join(root_dir,'{}_metric_hist.png'.format(col)))
 
@@ -58,7 +58,7 @@ def analyze_metric(run,draw=False,log_file=None):
 
     df = pd.read_csv(os.path.join('/home/fungii/thesis_code/celebA_metric_results','run_{}'.format(run),'gan_distances.csv'))
 
-    calculate_metric_stats(df=df,root_dir=root_dir,draw=draw,log_file=log_file)
+    return calculate_metric_stats(df=df,root_dir=root_dir,draw=draw,log_file=log_file)
 
 if __name__ == '__main__':
     parser = ArgumentParser()
