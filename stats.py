@@ -62,10 +62,15 @@ def generate_box_plot(df,fname,mode=None):
     """
     plt.figure()
     ax=df.plot.box(figsize=(12,12))
+
     if mode == None:
         ax.set_title('Box plot for Inpainting-Original embedding cosine distances')
     else:
-        ax.set_title('Box Plot for G(z)-{} embedding cosine distances'.format(mode))
+        if mode == 'gap':
+            ax.set_title('Box Plot for gap between test and train distances')
+        else:
+            ax.set_title('Box Plot for G(z)-{} embedding cosine distances'.format(mode))
+
     plt.savefig(fname)
     plt.close()
 

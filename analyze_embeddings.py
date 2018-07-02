@@ -31,10 +31,12 @@ def concat_df(run):
     """
     test_col_list = []
     train_col_list = []
+    gap_col_list = []
     for model in models:
         df = read_file(model,run)
         test_col_list.append(df['Test-Gz Cosine'])
         train_col_list.append(df['Train-Gz Cosine'])
+        gap_col_list.append(df['Test-Gz Cosine'].sub(df['Train-Gz Cosine']))
 
     df_test = pd.concat(test_col_list,axis=1)
     df_test.columns = models
@@ -42,7 +44,12 @@ def concat_df(run):
     df_train = pd.concat(train_col_list,axis=1)
     df_train.columns = models
 
-    return df_test,df_train
+    df_gap = pd.concat(gap_col_list,axis=1)
+    df_gap.columns = models
+
+
+
+    return df_test,df_train,df_gap
 
 
 
@@ -85,7 +92,7 @@ def analyze_embeddings(run,draw=False,log_file=None):
     if os.path.exists(root_dir) is False:
         os.makedirs(root_dir)
 
-    df_test,df_train = concat_df(run)
+    df_test,df_train,df_gap = concat_df(run)
 
     dist_means_test,dist_var_test = calculate_embedding_stats(df_test)
     dist_means_train,dist_var_train = calculate_embedding_stats(df_train)
@@ -117,6 +124,7 @@ def analyze_embeddings(run,draw=False,log_file=None):
     if draw is True:
         create_box_plot(df=df_test,mode='test',root_dir=root_dir)
         create_box_plot(df=df_train,mode='train',root_dir=root_dir)
+        create_box_plot(df=df_gap,mode='gap',root_dir=root_dir)
         for model in models:
             create_histogram(col=df_test[model],model=model,root_dir=root_dir,mode='test')
             create_histogram(col=df_train[model],model=model,root_dir=root_dir,mode='train')
