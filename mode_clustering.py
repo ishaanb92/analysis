@@ -16,14 +16,14 @@ def read_gz_dict(model,run):
         return np.array(list(gz_dict.values()))
 
 
-def read_train_dict(model,run):
+def read_test_dict(run):
 
-    with open(os.path.join(os.getcwd(),'viz','run_{}'.format(run),'{}_embedding'.format(model.upper()),'closest_train_emb.pkl'),'rb') as f:
-        train_emb_dict =  pickle.load(f)
-        return np.array(list(train_emb_dict.values()))
+    with open(os.path.join(os.getcwd(),'viz','run_{}'.format(run),'embeddings','test_emb_dict.pkl'),'rb') as f:
+        test_emb_dict =  pickle.load(f)
+        return np.array(list(test_emb_dict.values()))
 
 
-def compute_pairwise_distances(X,model):
+def compute_pairwise_distances(X):
     """
     Given an array of vectors X, calculate pair-wise distances
     Array contains 128-D embeddings of G(z) produced by the model
@@ -47,13 +47,21 @@ def pairwise_analysis(root_dir,run):
     pair_wise = []
     for model in models:
 
-        distance_array = compute_pairwise_distances(read_gz_dict(model,run),model)
+        distance_array = compute_pairwise_distances(read_gz_dict(model,run))
         pair_wise.append(distance_array)
 
+
+    pair_wise.append(compute_pairwise_distances(read_test_dict(run=run)))
     pair_wise = np.array(pair_wise)
     pair_wise_t = np.transpose(pair_wise)
 
-    df = pd.DataFrame(data=pair_wise_t,columns=models)
+    columns = []
+    for model in models:
+        columns.append(model)
+
+    columns.append('Test Images')
+
+    df = pd.DataFrame(data=pair_wise_t,columns=columns)
     plt.figure()
     df.plot.box(figsize=(10,10))
     plt.savefig(os.path.join(root_dir,'pairwise_box_gz.png'))
