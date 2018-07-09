@@ -16,8 +16,8 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None):
 
     valid_cols = []  # Weird pandas bug -- First column is garbage -- remove it
                      # 2nd column is the original image file path, not needed for numerical analysis
-    for idx in range(2,len(df.columns)):
-        valid_cols.append(df[df.columns[idx]])
+    for model in models:
+        valid_cols.append(df[model.upper()])
 
     df_concat = pd.concat(valid_cols,axis=1)
 
@@ -33,9 +33,10 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None):
 
         plot_hist(col=df[col],fname=os.path.join(root_dir,'{}_metric_hist.png'.format(col)))
 
-
+    kwds = {}
+    kwds['patch_artist'] = True
     if draw is True:
-        generate_box_plot(df=df_concat,fname=os.path.join(root_dir,'box_plot.png'))
+        generate_box_plot(df=df_concat,fname=os.path.join(root_dir,'box_plot.png'),kwds=kwds)
 
     # Homogenity tests
     pairs = generate_pairs()
