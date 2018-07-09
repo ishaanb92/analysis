@@ -63,7 +63,15 @@ def pairwise_analysis(root_dir,run):
 
     df = pd.DataFrame(data=pair_wise_t,columns=columns)
     plt.figure()
-    df.plot.box(figsize=(10,10))
+    kwds = {}
+    kwds['patch_artist'] = True
+    _,barplot = df.plot.box(figsize=(10,10),return_type='both',**kwds)
+    colors_pairwise = colors.copy()
+    colors_pairwise.append('white')
+
+    for patch,color in zip(barplot['boxes'],colors_pairwise):
+        patch.set_facecolor(color)
+
     plt.savefig(os.path.join(root_dir,'pairwise_box_gz.png'))
     plt.close()
 

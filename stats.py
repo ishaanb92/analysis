@@ -14,8 +14,8 @@ Python module to calculate statistics for all experiments
 
 """
 
-models = ['dcgan','dcgan-gp','dcgan_sim','wgan','wgan-gp','dragan','dragan_bn','dcgan-cons']
-
+models = ['dcgan','dcgan-gp','dcgan_sim','dragan','dragan_bn','dcgan-cons','wgan','wgan-gp']
+colors = ['darkgreen','darkgreen','darkgreen','darkgreen','darkgreen','darkgreen','maroon','maroon']
 
 def generate_pairs():
 
@@ -55,13 +55,19 @@ def plot_hist(col,fname=None):
     plt.close()
 
 
-def generate_box_plot(df,fname,mode=None):
+def generate_box_plot(df,fname,mode=None,kwds=None):
     """
     Box plot
 
     """
     plt.figure()
-    ax=df.plot.box(figsize=(12,12))
+    if kwds is None:
+        ax,_=df.plot.box(figsize=(12,12),return_type='both')
+    else:
+        ax,barplot=df.plot.box(figsize=(12,12),return_type='both',**kwds)
+        # Color GAN box plot based on divergence used
+        for patch,color in zip(barplot['boxes'],colors):
+            patch.set_facecolor(color)
 
     if mode == None:
         ax.set_title('Box plot for Inpainting-Original embedding cosine distances')
