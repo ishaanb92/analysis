@@ -12,10 +12,12 @@ Calculates metric/embedding statistics across multiple runs
 """
 parser = ArgumentParser()
 parser.add_argument('--last_run',type=int,help='Value of the last run for which results are available',required=True)
+parser.add_argument('--draw',action='store_true',help='Flag to regenerate figures for runs',default=False)
 
 args = parser.parse_args()
 
 last_run = args.last_run
+draw = args.draw
 
 sim_metric_means = [] # List of dicts from each run
 emb_test_dist_means = []
@@ -29,12 +31,12 @@ log_file.write('\n\n\n\n')
 for run in range(2,last_run+1):
     log_file.write('### Analysis for Run {} ### \n\n'.format(run))
     log_file.write('*** Embeddings Analysis ***\n')
-    test_means_dict,train_means_dict,_,_ = analyze_embeddings(run=str(run),draw=False,log_file=log_file)
+    test_means_dict,train_means_dict,_,_ = analyze_embeddings(run=str(run),draw=draw,log_file=log_file)
     emb_test_dist_means.append(test_means_dict)
     emb_train_dist_means.append(train_means_dict)
     log_file.write('\n')
     log_file.write('*** Metric Analysis ***\n')
-    run_mean_dict = analyze_metric(run=str(run),draw=False,log_file=log_file)
+    run_mean_dict = analyze_metric(run=str(run),draw=draw,log_file=log_file)
     sim_metric_means.append(run_mean_dict)
     log_file.write('\n\n\n')
 

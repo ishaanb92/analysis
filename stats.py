@@ -77,6 +77,10 @@ def generate_box_plot(df,fname,mode=None,kwds=None):
         else:
             ax.set_title('Box Plot for G(z)-{} embedding cosine distances'.format(mode))
 
+    ax.set_xlabel('GAN Models')
+
+    ax.set_ylabel('Cosine Distance')
+
     plt.savefig(fname)
     plt.close()
 
