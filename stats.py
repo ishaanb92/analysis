@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from argparse import ArgumentParser
 from scipy.stats import shapiro
 from scipy.stats import bartlett
 from scipy.stats import levene
@@ -52,7 +51,7 @@ def plot_hist(col,fname=None):
     plt.ylabel('Count')
     plt.xlim(0,2)
     plt.savefig(fname)
-    plt.close()
+    plt.close('all')
 
 
 def generate_box_plot(df,fname,mode=None,kwds=None):
@@ -82,7 +81,7 @@ def generate_box_plot(df,fname,mode=None,kwds=None):
     ax.set_ylabel('Cosine Distance')
 
     plt.savefig(fname)
-    plt.close()
+    plt.close('all')
 
 def check_homegenity(col1,col2,verbose=False):
 

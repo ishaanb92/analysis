@@ -87,6 +87,7 @@ x = [i for i in range(len(models))]
 w = 0.3
 x = np.asarray(x)
 
+plt.figure(figsize=(10,10))
 bar1 = plt.bar(x, sim_means,width=w,color='b',align='center')
 bar2 = plt.bar(x+w,gaps,width=w,color='g',align='center')
 models_u = [model.upper() for model in models]
@@ -94,9 +95,8 @@ plt.xticks(x,models_u)
 plt.ylabel('Cosine Distances')
 plt.legend([bar1,bar2],['Similarity Scores','Generalization Gap'])
 plt.xlabel('GAN Models')
-
-plt.show()
-#plt.savefig('joint_bar.png')
+plt.savefig('joint_bar.png')
+plt.close()
 
 
 

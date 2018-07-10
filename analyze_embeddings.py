@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import os
 from stats import *
 import math
@@ -77,7 +76,9 @@ def create_box_plot(df,mode='test',root_dir=None):
 
     """
 
-    generate_box_plot(df,fname=os.path.join(root_dir,'{}_box_plot.png'.format(mode)),mode=mode)
+    kwds = {}
+    kwds['patch_artist'] = True
+    generate_box_plot(df,fname=os.path.join(root_dir,'{}_box_plot.png'.format(mode)),mode=mode,kwds=kwds)
 
 
 def create_histogram(col,model,root_dir,mode='test'):
