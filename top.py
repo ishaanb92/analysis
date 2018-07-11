@@ -11,7 +11,7 @@ Calculates metric/embedding statistics across multiple runs
 
 """
 
-def calculate_mean_stats(last_run,draw):
+def calculate_mean_stats(last_run,draw,log_file):
     """
     Calculates mean stats over all runs
 
@@ -19,11 +19,6 @@ def calculate_mean_stats(last_run,draw):
     sim_metric_means = [] # List of dicts from each run
     emb_test_dist_means = []
     emb_train_dist_means = []
-
-    log_file = open('log_file.txt','w')
-    log_file.write('****Analysis for In-painting experiments*****\n')
-    log_file.write('This file has been automatically generated, to regenerate or add data from more runs, re-run top.py\n')
-    log_file.write('\n\n\n\n')
 
     for run in range(2,last_run+1):
         log_file.write('### Analysis for Run {} ### \n\n'.format(run))
@@ -64,14 +59,11 @@ def calculate_mean_stats(last_run,draw):
 
         avg_gap[model] = math.fabs(emb_test_mean-emb_train_mean)
 
-        log_file.write('Similarity Metric  Original - Inpainting ::  Mean = {} Std = {}\n'.format(sim_metric_mean[model],sim_metric_std))
-        log_file.write('Embeddings Metric Test - G(z) :: Mean = {} Std = {}\n'.format(emb_test_mean,emb_test_std))
-        log_file.write('Embeddings Metric Train - G(z) :: Mean = {} Std = {}\n'.format(emb_train_mean,emb_train_std))
-        log_file.write('Overfitting gap = {}\n'.format(avg_gap[model]))
+        log_file.write('Similarity Metric  Original - Inpainting ::  Mean = {} Std = {}\n'.format(np.around(sim_metric_mean[model],decimals=4),np.around(sim_metric_std,decimals=4)))
+        log_file.write('Embeddings Metric Test - G(z) :: Mean = {} Std = {}\n'.format(np.around(emb_test_mean,decimals=4),np.around(emb_test_std,decimals=4)))
+        log_file.write('Embeddings Metric Train - G(z) :: Mean = {} Std = {}\n'.format(np.around(emb_train_mean,decimals=4),np.around(emb_train_std,decimals=4)))
+        log_file.write('Overfitting gap = {}\n'.format(np.around(avg_gap[model],decimals=4)))
         log_file.write('\n\n')
-
-
-    log_file.close()
 
     #Plot a joint bar graph
     sim_means = []
@@ -93,10 +85,21 @@ def calculate_mean_stats(last_run,draw):
     plt.legend([bar1,bar2],['Similarity Scores','Generalization Gap'])
     plt.xlabel('GAN Models')
     plt.savefig('joint_bar.png')
-    plt.close()
+    plt.close('all')
 
 
-def accumulate_scores(last_run):
+def calculate_ci(col):
+    """
+    Given a column of similarity scores, calculates
+    the 95% CI
+
+    """
+
+    std = np.sqrt(get_var(col))
+    ci = np.multiply(1.96,std)
+    return ci
+
+def accumulate_scores(last_run,draw,log_file):
 
     """
     Accumulates scores/distances from different runs
@@ -117,9 +120,27 @@ def accumulate_scores(last_run):
         valid_cols.append(df_concat[model.upper()])
 
     df_valid_cols = pd.concat(valid_cols,axis=1) # Merge valid columns horizontally
-    kwds = {}
-    kwds['patch_artist'] = True
-    generate_box_plot(df=df_valid_cols,fname='sim_distances.png',kwds=kwds)
+
+    if draw is True:
+        kwds = {}
+        kwds['patch_artist'] = True
+        generate_box_plot(df=df_valid_cols,fname='sim_distances.png',kwds=kwds)
+
+    log_file.write('****CI for Image Similarity scores****\n')
+    # CI
+    for model in models:
+        ci = calculate_ci(df_valid_cols[model.upper()])
+        mean = get_mean(df_valid_cols[model.upper()])
+        std = np.sqrt(get_var(df_valid_cols[model.upper()]))
+        log_file.write('Model:{} Mean : {} Std : {}\n'.format(model.upper(),np.around(mean,decimals=4),np.around(std,decimals=4)))
+        if check_normality(df_valid_cols[model.upper()]) is True:
+            upper_ci = mean + ci
+            lower_ci = mean - ci
+            log_file.write('Model : {} Mean : {} Std: {}\n'.format(model.upper(),mean,lower_ci,upper_ci))
+        else:
+            log_file.write('Scores for {} form a non-normal distribution\n'.format(model.upper()))
+
+
 
 
 if __name__ == '__main__':
@@ -133,5 +154,12 @@ if __name__ == '__main__':
     last_run = args.last_run
     draw = args.draw
 
-    calculate_mean_stats(last_run=last_run,draw=draw)
-    accumulate_scores(last_run=last_run)
+    log_file = open('log_file.txt','w')
+    log_file.write('****Analysis for In-painting experiments*****\n')
+    log_file.write('This file has been automatically generated, to regenerate or add data from more runs, re-run top.py\n')
+    log_file.write('\n\n\n\n')
+
+    calculate_mean_stats(last_run=last_run,draw=draw,log_file=log_file)
+    accumulate_scores(last_run=last_run,draw=draw,log_file=log_file)
+
+    log_file.close()
