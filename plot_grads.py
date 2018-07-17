@@ -5,6 +5,7 @@ import shutil
 import os
 from argparse import ArgumentParser
 from sys import exit
+from stats import models
 
 """
 Analysis script to check the 'effect' of regularization
@@ -22,10 +23,12 @@ def flatten_grads(grads):
     return grad_list
 
 
-def plot_grads(grads,model):
+def plot_grads(grads,model,gp_term = False):
 
     """
     Plots norm of gradient v/s iteration of training
+    gp_term : True => Norm of GP reg term for unregularized DCGAN
+              False => Norm of DRAGAN reg term for uregularized DCGAN
     """
 
     iters = [i*10 for i in range(len(grads))] # X-axis containing iteration number
@@ -41,6 +44,7 @@ def plot_grads(grads,model):
 
     plt.title('{} : Gradient Norm used in Regularization term'.format(model.upper()))
 
+    plt.ylim((0,20))
     if model == 'wgan-gp':
         plt.ylabel('Critic Gradient Norm')
     else:
@@ -49,27 +53,36 @@ def plot_grads(grads,model):
     if os.path.exists('grad_figures') is False:
         os.makedirs('grad_figures')
 
-    filename = 'grads_{}'.format(str(model)) +'.png'
+    if gp_term is False:
+        filename = 'grads_{}'.format(str(model)) +'.png'
+    else:
+        filename = 'grads_{}_gp'.format(str(model)) +'.png'
+
     save_path = os.path.join('grad_figures',filename)
     plt.savefig(save_path)
 
     plt.close('all')
 
+def create_plots(model):
+
+    pkl_path = os.path.join('grad_norms','{}_grads.pkl'.format(model.lower()))
+    with open(pkl_path,'rb') as f:
+        grads = pickle.load(f)
+    plot_grads(grads,model)
+    # Plot the GP term for un-reg DCGAN
+    if model == 'dcgan':
+        pkl_path = os.path.join('grad_norms','{}_grads.pkl'.format(model.lower()))
+        with open(pkl_path,'rb') as f:
+            grads = pickle.load(f)
+        plot_grads(grads,model,gp_term=True)
 
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser()
-    parser.add_argument('--model', type=str, help='Name of the GAN model', required=True)
-
-    args = parser.parse_args()
-
-    pkl_path = '{}_grads.pkl'.format(args.model.lower())
-
-    with open(pkl_path,'rb') as f:
-        grads = pickle.load(f)
-
-    plot_grads(grads=grads,model=args.model.lower())
+    for model in models:
+        if model == 'dcgan-cons':
+            continue
+        create_plots(model)
 
 
 
