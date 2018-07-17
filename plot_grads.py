@@ -44,8 +44,14 @@ def plot_grads(grads,model,gp_term = False):
 
     plt.title('{} : Gradient Norm used in Regularization term'.format(model.upper()))
 
-    plt.ylim((0,20))
-    if model == 'wgan-gp':
+
+    if model == 'dcgan' or model == 'wgan' or model == 'dcgan_sim':
+        plt.ylim((0,50))
+    else:
+        plt.ylim((0,5))
+
+
+    if model == 'wgan-gp' or model == 'wgan':
         plt.ylabel('Critic Gradient Norm')
     else:
         plt.ylabel('Discriminator Gradient Norm')
