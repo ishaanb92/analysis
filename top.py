@@ -76,13 +76,13 @@ def calculate_mean_stats(last_run,draw,log_file):
     w = 0.3
     x = np.asarray(x)
 
-    plt.figure(figsize=(10,10))
+    plt.figure(figsize=(15,15))
     bar1 = plt.bar(x, sim_means,width=w,color='b',align='center')
     bar2 = plt.bar(x+w,gaps,width=w,color='g',align='center')
     models_u = [model.upper() for model in models]
     plt.xticks(x,models_u)
     plt.ylabel('Cosine Distances')
-    plt.legend([bar1,bar2],['Similarity Scores','Generalization Gap'])
+    plt.legend([bar1,bar2],['Mean Cosine Distance','Mean Generalization Gap'])
     plt.xlabel('GAN Models')
     plt.savefig('joint_bar.png')
     plt.close('all')

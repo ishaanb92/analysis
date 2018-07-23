@@ -46,13 +46,17 @@ def plot_grads(grads,model,gp_term = False):
 
 
     if model == 'dcgan' or model == 'wgan' or model == 'dcgan_sim':
-        plt.ylim((0,50))
+        pass
     else:
         plt.ylim((0,5))
 
 
-    if model == 'wgan-gp' or model == 'wgan':
+    if model == 'wgan':
+        plt.ylabel('Unregularized Critic Gradient Norm')
+    elif model == 'wgan-gp':
         plt.ylabel('Critic Gradient Norm')
+    elif model == 'dcgan' or model == 'dcgan_sim':
+        plt.ylabel('Unregularized Discriminator Gradient Norm')
     else:
         plt.ylabel('Discriminator Gradient Norm')
 
@@ -77,7 +81,7 @@ def create_plots(model):
     plot_grads(grads,model)
     # Plot the GP term for un-reg DCGAN
     if model == 'dcgan':
-        pkl_path = os.path.join('grad_norms','{}_grads.pkl'.format(model.lower()))
+        pkl_path = os.path.join('grad_norms','{}_grads_gp.pkl'.format(model.lower()))
         with open(pkl_path,'rb') as f:
             grads = pickle.load(f)
         plot_grads(grads,model,gp_term=True)

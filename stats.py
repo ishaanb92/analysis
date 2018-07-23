@@ -13,8 +13,8 @@ Python module to calculate statistics for all experiments
 
 """
 
-models = ['dcgan','dcgan-gp','dcgan_sim','dragan','dragan_bn','dcgan-cons','wgan','wgan-gp']
-colors = ['darkgreen','darkgreen','darkgreen','darkgreen','darkgreen','darkgreen','maroon','maroon']
+models = ['dcgan-gp','dcgan','dcgan_sim','dragan_bn','wgan','wgan-gp','dragan','dcgan-cons']
+colors = ['darkgreen','darkgreen','darkgreen','darkgreen','maroon','maroon','darkgreen','darkgreen']
 
 def generate_pairs():
 
