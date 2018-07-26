@@ -76,14 +76,16 @@ def calculate_mean_stats(last_run,draw,log_file):
     w = 0.3
     x = np.asarray(x)
 
-    plt.figure(figsize=(15,15))
+    plt.figure(figsize=(25,15))
     bar1 = plt.bar(x, sim_means,width=w,color='b',align='center')
     bar2 = plt.bar(x+w,gaps,width=w,color='g',align='center')
     models_u = [model.upper() for model in models_xticks]
     plt.xticks(x,models_u)
-    plt.ylabel('Cosine Distances')
-    plt.legend([bar1,bar2],['Mean Cosine Distance','Mean Generalization Gap'])
-    plt.xlabel('GAN Models')
+    plt.ylabel('Cosine Distances',fontsize=20)
+    plt.title('Comaprison of Generalization Gap and Mean Cosine Distance',fontsize=30)
+    plt.tick_params(labelsize=20)
+    plt.legend([bar1,bar2],['Mean Cosine Distance','Mean Generalization Gap'],fontsize=20)
+    plt.xlabel('GAN Models',fontsize=20)
     plt.savefig('joint_bar.png')
     plt.close('all')
 
@@ -121,7 +123,8 @@ def accumulate_scores(last_run,draw,log_file):
 
     df_valid_cols = pd.concat(valid_cols,axis=1) # Merge valid columns horizontally
 
-    df_valid_cols.columns = models_xticks
+    models_xticks_u = [model.upper() for model in models_xticks]
+    df_valid_cols.columns = models_xticks_u
 
     if draw is True:
         kwds = {}
@@ -130,7 +133,7 @@ def accumulate_scores(last_run,draw,log_file):
 
     log_file.write('****CI for Image Similarity scores****\n')
     # CI
-    for model in models_xticks:
+    for model in models_xticks_u:
         ci = calculate_ci(df_valid_cols[model])
         mean = get_mean(df_valid_cols[model])
         std = np.sqrt(get_var(df_valid_cols[model]))

@@ -66,12 +66,19 @@ def pairwise_analysis(root_dir,run):
     plt.figure()
     kwds = {}
     kwds['patch_artist'] = True
-    _,barplot = df.plot.box(figsize=(10,10),return_type='both',**kwds)
+    ax,barplot = df.plot.box(figsize=(25,15),return_type='both',**kwds)
     colors_pairwise = colors.copy()
     colors_pairwise.append('white')
 
     for patch,color in zip(barplot['boxes'],colors_pairwise):
         patch.set_facecolor(color)
+
+
+    ax.set_xlabel('GAN Models',fontsize=20)
+
+    ax.set_ylabel('Cosine Distance',fontsize=20)
+    ax.xaxis.set_tick_params(labelsize=20)
+    ax.set_title('Box plot for pairwise distances for generated images',fontsize=30)
 
     plt.savefig(os.path.join(root_dir,'pairwise_box_gz.png'))
     plt.close()

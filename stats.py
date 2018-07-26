@@ -63,24 +63,25 @@ def generate_box_plot(df,fname,mode=None,kwds=None):
     """
     plt.figure()
     if kwds is None:
-        ax,_=df.plot.box(figsize=(12,12),return_type='both')
+        ax,_=df.plot.box(figsize=(25,15),return_type='both')
     else:
-        ax,barplot=df.plot.box(figsize=(12,12),return_type='both',**kwds)
+        ax,barplot=df.plot.box(figsize=(25,15),return_type='both',**kwds)
         # Color GAN box plot based on divergence used
         for patch,color in zip(barplot['boxes'],colors):
             patch.set_facecolor(color)
 
     if mode == None:
-        ax.set_title('Box plot for Inpainting-Original embedding cosine distances')
+        ax.set_title('Box plot for Inpainting-Original embedding cosine distances',fontsize=30)
     else:
         if mode == 'gap':
-            ax.set_title('Box Plot for gap between test and train distances')
+            ax.set_title('Box Plot for gap between test and train distances',fontsize=30)
         else:
-            ax.set_title('Box Plot for G(z)-{} embedding cosine distances'.format(mode))
+            ax.set_title('Box Plot for G(z)-{} embedding cosine distances'.format(mode),fontsize=30)
 
-    ax.set_xlabel('GAN Models')
+    ax.set_xlabel('GAN Models',fontsize=20)
 
-    ax.set_ylabel('Cosine Distance')
+    ax.set_ylabel('Cosine Distance',fontsize=20)
+    ax.xaxis.set_tick_params(labelsize=20)
 
     plt.savefig(fname)
     plt.close('all')
