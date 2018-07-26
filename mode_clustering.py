@@ -56,7 +56,8 @@ def pairwise_analysis(root_dir,run):
     pair_wise_t = np.transpose(pair_wise)
 
     columns = []
-    for model in models:
+
+    for model in models_xticks:
         columns.append(model)
 
     columns.append('Test Images')

@@ -79,7 +79,7 @@ def calculate_mean_stats(last_run,draw,log_file):
     plt.figure(figsize=(15,15))
     bar1 = plt.bar(x, sim_means,width=w,color='b',align='center')
     bar2 = plt.bar(x+w,gaps,width=w,color='g',align='center')
-    models_u = [model.upper() for model in models]
+    models_u = [model.upper() for model in models_xticks]
     plt.xticks(x,models_u)
     plt.ylabel('Cosine Distances')
     plt.legend([bar1,bar2],['Mean Cosine Distance','Mean Generalization Gap'])
@@ -121,6 +121,8 @@ def accumulate_scores(last_run,draw,log_file):
 
     df_valid_cols = pd.concat(valid_cols,axis=1) # Merge valid columns horizontally
 
+    df_valid_cols.columns = models_xticks
+
     if draw is True:
         kwds = {}
         kwds['patch_artist'] = True
@@ -128,12 +130,12 @@ def accumulate_scores(last_run,draw,log_file):
 
     log_file.write('****CI for Image Similarity scores****\n')
     # CI
-    for model in models:
-        ci = calculate_ci(df_valid_cols[model.upper()])
-        mean = get_mean(df_valid_cols[model.upper()])
-        std = np.sqrt(get_var(df_valid_cols[model.upper()]))
+    for model in models_xticks:
+        ci = calculate_ci(df_valid_cols[model])
+        mean = get_mean(df_valid_cols[model])
+        std = np.sqrt(get_var(df_valid_cols[model]))
         log_file.write('Model:{} Mean : {} Std : {}\n'.format(model.upper(),np.around(mean,decimals=4),np.around(std,decimals=4)))
-        if check_normality(df_valid_cols[model.upper()]) is True:
+        if check_normality(df_valid_cols[model]) is True:
             upper_ci = mean + ci
             lower_ci = mean - ci
             log_file.write('Model : {} Mean : {} Std: {}\n'.format(model.upper(),mean,lower_ci,upper_ci))

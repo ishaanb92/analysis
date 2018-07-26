@@ -16,6 +16,8 @@ Python module to calculate statistics for all experiments
 models = ['dcgan-gp','dcgan','dcgan_sim','dragan_bn','wgan','wgan-gp','dragan','dcgan-cons']
 colors = ['darkgreen','darkgreen','darkgreen','darkgreen','maroon','maroon','darkgreen','darkgreen']
 
+models_xticks = ['nsgan-gp','nsgan','nsgan_sim','dragan_bn','wgan','wgan-gp','dragan','nsgan-cons']
+
 def generate_pairs():
 
     pairs = []
