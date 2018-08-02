@@ -72,20 +72,42 @@ def calculate_mean_stats(last_run,draw,log_file):
         sim_means.append(sim_metric_mean[model])
         gaps.append(avg_gap[model])
 
-    x = [i for i in range(len(models))]
+
+    # Read the results of the synthetic experiment -- NEW CODE, HACKY
+    syn_dir = os.path.join(os.getcwd(),'synthetic')
+
+    # Mean cosine
+    syn_distances_df = pd.read_csv(os.path.join(syn_dir,'syn_distances.csv'))
+    overfit_cosine_mean = syn_distances_df['SYN'].mean()
+    sim_means.append(overfit_cosine_mean)
+    sim_means.append(0) # For generalizing GAN, mean cosine distance is 0 by definition
+
+    # Generalization Gap
+    syn_gap_df = pd.read_pickle(os.path.join(syn_dir,'synthetic.pkl'))
+    mean_overfit_gap = syn_gap_df['Overfitting'].mean()
+    mean_gen_gap = syn_gap_df['Generalizing'].mean()
+
+    gaps.append(mean_overfit_gap)
+    gaps.append(mean_gen_gap)
+
+    x = [i for i in range(len(models)+2)] # Add 2 for the synthetic GANs
     w = 0.3
     x = np.asarray(x)
 
-    plt.figure(figsize=(25,15))
+
+    plt.figure(figsize=(30,15))
     bar1 = plt.bar(x, sim_means,width=w,color='b',align='center')
     bar2 = plt.bar(x+w,gaps,width=w,color='g',align='center')
     models_u = [model.upper() for model in models_xticks]
+    models_u.append('O-GAN')
+    models_u.append('G-GAN')
+    plt.axhline(color='black',linestyle='-')
     plt.xticks(x,models_u)
     plt.ylabel('Cosine Distances',fontsize=20)
     plt.title('Comaprison of Generalization Gap and Mean Cosine Distance',fontsize=30)
-    plt.tick_params(labelsize=20)
+    plt.tick_params(labelsize=25)
     plt.legend([bar1,bar2],['Mean Cosine Distance','Mean Generalization Gap'],fontsize=20)
-    plt.xlabel('GAN Models',fontsize=20)
+    plt.xlabel('GAN Models',fontsize=25)
     plt.savefig('joint_bar.png')
     plt.close('all')
 

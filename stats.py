@@ -82,6 +82,7 @@ def generate_box_plot(df,fname,mode=None,kwds=None):
 
     ax.set_ylabel('Cosine Distance',fontsize=20)
     ax.xaxis.set_tick_params(labelsize=20)
+    ax.yaxis.set_tick_params(labelsize=20)
 
     plt.savefig(fname)
     plt.close('all')

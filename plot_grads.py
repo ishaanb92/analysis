@@ -42,7 +42,11 @@ def plot_grads(grads,model,gp_term = False):
 
     plt.xlabel('Training Iteration')
 
-    plt.title('{} : Gradient Norm used in Regularization term'.format(model.upper()))
+    if model != 'dcgan':
+        plt.title('{} : Gradient Norm used in Regularization term'.format(model.upper()))
+    else:
+        plt.title('NSGAN : Gradient Norm used in Regularization term')
+
 
 
     if model == 'dcgan' or model == 'wgan' or model == 'dcgan_sim':
