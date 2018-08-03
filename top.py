@@ -73,9 +73,13 @@ def calculate_mean_stats(last_run,draw,log_file):
     #Plot a joint bar graph
     sim_means = []
     gaps = []
+    sim_stds = []
+    gap_stds = []
     for model in models:
         sim_means.append(sim_metric_mean[model])
         gaps.append(avg_gap[model])
+        sim_stds.append(sim_metric_std[model])
+        gap_stds.append(std_gap[model])
 
 
     # Read the results of the synthetic experiment -- NEW CODE, HACKY
@@ -95,14 +99,20 @@ def calculate_mean_stats(last_run,draw,log_file):
     gaps.append(mean_overfit_gap)
     gaps.append(mean_gen_gap)
 
+    # Single run for synthetic experiment so no standard error reported
+    gap_stds.append(0)
+    gap_stds.append(0)
+    sim_stds.append(0)
+    sim_stds.append(0)
+
     x = [i for i in range(len(models)+2)] # Add 2 for the synthetic GANs
     w = 0.3
     x = np.asarray(x)
 
 
     plt.figure(figsize=(30,15))
-    bar1 = plt.bar(x, sim_means,width=w,color='b',align='center')
-    bar2 = plt.bar(x+w,gaps,width=w,color='g',align='center')
+    bar1 = plt.bar(x, sim_means,width=w,color='b',align='center',yerr=sim_stds,capsize=5.0,ecolor='r')
+    bar2 = plt.bar(x+w,gaps,width=w,color='g',align='center',yerr=gap_stds,capsize=5.0,ecolor='r')
     models_u = [model.upper() for model in models_xticks]
     models_u.append('O-GAN')
     models_u.append('G-GAN')
