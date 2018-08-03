@@ -52,7 +52,7 @@ def plot_grads(grads,model,gp_term = False):
     if model == 'dcgan' or model == 'wgan' or model == 'dcgan_sim':
         pass
     else:
-        plt.ylim((0,5))
+        plt.ylim((0,3))
 
 
     if model == 'wgan':
