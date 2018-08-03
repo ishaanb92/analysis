@@ -33,7 +33,9 @@ def calculate_mean_stats(last_run,draw,log_file):
         log_file.write('\n\n\n')
 
     sim_metric_mean = {}
+    sim_metric_std = {}
     avg_gap = {}
+    std_gap = {}
 
 
     # Statistics across runs
@@ -41,28 +43,31 @@ def calculate_mean_stats(last_run,draw,log_file):
         sim_means = []
         emb_test_means = []
         emb_train_means = []
+        gap_means = []
         log_file.write('Inter-run analysis for {}\n'.format(model.upper()))
 
         for sim_means_dict,emb_test_dict,emb_train_dict in zip(sim_metric_means,emb_test_dist_means,emb_train_dist_means):
             sim_means.append(sim_means_dict[model])
             emb_test_means.append(emb_test_dict[model])
             emb_train_means.append(emb_train_dict[model])
+            gap_means.append(emb_test_dict[model]-emb_train_dict[model])
 
         # Analyze
         sim_metric_mean[model] = np.asarray(sim_means).mean()
+        sim_metric_std[model] = np.asarray(sim_means).std()
         emb_test_mean = np.asarray(emb_test_means).mean()
         emb_train_mean = np.asarray(emb_train_means).mean()
 
-        sim_metric_std = np.asarray(sim_means).std()
         emb_test_std = np.asarray(emb_test_means).std()
         emb_train_std = np.asarray(emb_train_means).std()
 
         avg_gap[model] = math.fabs(emb_test_mean-emb_train_mean)
+        std_gap[model] = np.asarray(gap_means).std()
 
-        log_file.write('Similarity Metric  Original - Inpainting ::  Mean = {} Std = {}\n'.format(np.around(sim_metric_mean[model],decimals=4),np.around(sim_metric_std,decimals=4)))
+        log_file.write('Similarity Metric  Original - Inpainting ::  Mean = {} Std = {}\n'.format(np.around(sim_metric_mean[model],decimals=4),np.around(sim_metric_std[model],decimals=4)))
         log_file.write('Embeddings Metric Test - G(z) :: Mean = {} Std = {}\n'.format(np.around(emb_test_mean,decimals=4),np.around(emb_test_std,decimals=4)))
         log_file.write('Embeddings Metric Train - G(z) :: Mean = {} Std = {}\n'.format(np.around(emb_train_mean,decimals=4),np.around(emb_train_std,decimals=4)))
-        log_file.write('Overfitting gap = {}\n'.format(np.around(avg_gap[model],decimals=4)))
+        log_file.write('Overfitting gap = {}, Std = {} \n'.format(np.around(avg_gap[model],decimals=4),np.around(std_gap[model],decimals=4)))
         log_file.write('\n\n')
 
     #Plot a joint bar graph
