@@ -58,7 +58,7 @@ def pairwise_analysis(root_dir,run):
     columns = []
 
     for model in models_xticks:
-        columns.append(model)
+        columns.append(model.upper())
 
     columns.append('Test Images')
 
@@ -66,7 +66,7 @@ def pairwise_analysis(root_dir,run):
     plt.figure()
     kwds = {}
     kwds['patch_artist'] = True
-    ax,barplot = df.plot.box(figsize=(25,15),return_type='both',**kwds)
+    ax,barplot = df.plot.box(figsize=(30,15),return_type='both',**kwds)
     colors_pairwise = colors.copy()
     colors_pairwise.append('white')
 
@@ -74,10 +74,11 @@ def pairwise_analysis(root_dir,run):
         patch.set_facecolor(color)
 
 
-    ax.set_xlabel('GAN Models',fontsize=20)
+    ax.set_xlabel('GAN Models',fontsize=25)
 
-    ax.set_ylabel('Cosine Distance',fontsize=20)
-    ax.xaxis.set_tick_params(labelsize=20)
+    ax.set_ylabel('Cosine Distance',fontsize=25)
+    ax.xaxis.set_tick_params(labelsize=25)
+    ax.yaxis.set_tick_params(labelsize=25)
     ax.set_title('Box plot for pairwise distances for generated images',fontsize=30)
 
     plt.savefig(os.path.join(root_dir,'pairwise_box_gz.png'))

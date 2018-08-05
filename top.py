@@ -111,8 +111,8 @@ def calculate_mean_stats(last_run,draw,log_file):
 
 
     plt.figure(figsize=(30,15))
-    bar1 = plt.bar(x, sim_means,width=w,color='b',align='center',yerr=sim_stds,capsize=5.0,ecolor='r')
-    bar2 = plt.bar(x+w,gaps,width=w,color='g',align='center',yerr=gap_stds,capsize=5.0,ecolor='r')
+    bar1 = plt.bar(x, sim_means,width=w,color='blue',align='center',yerr=sim_stds,capsize=5.0,ecolor='r')
+    bar2 = plt.bar(x+w,gaps,width=w,color='tab:purple',align='center',yerr=gap_stds,capsize=5.0,ecolor='r')
     models_u = [model.upper() for model in models_xticks]
     models_u.append('O-GAN')
     models_u.append('G-GAN')

@@ -14,7 +14,7 @@ Python module to calculate statistics for all experiments
 """
 
 models = ['dcgan-gp','dcgan','dcgan_sim','dragan_bn','wgan','wgan-gp','dragan','dcgan-cons']
-colors = ['darkgreen','darkgreen','darkgreen','darkgreen','maroon','maroon','darkgreen','darkgreen']
+colors = ['tab:blue','tab:blue','tab:blue','tab:blue','tab:orange','tab:orange','tab:blue','tab:blue']
 
 models_xticks = ['nsgan-gp','nsgan','nsgan_sim','dragan_bn','wgan','wgan-gp','dragan','nsgan-cons']
 
@@ -78,11 +78,11 @@ def generate_box_plot(df,fname,mode=None,kwds=None):
         else:
             ax.set_title('Box Plot for G(z)-{} embedding cosine distances'.format(mode),fontsize=30)
 
-    ax.set_xlabel('GAN Models',fontsize=20)
+    ax.set_xlabel('GAN Models',fontsize=25)
 
-    ax.set_ylabel('Cosine Distance',fontsize=20)
-    ax.xaxis.set_tick_params(labelsize=20)
-    ax.yaxis.set_tick_params(labelsize=20)
+    ax.set_ylabel('Cosine Distance',fontsize=25)
+    ax.xaxis.set_tick_params(labelsize=25)
+    ax.yaxis.set_tick_params(labelsize=25)
 
     plt.savefig(fname)
     plt.close('all')
