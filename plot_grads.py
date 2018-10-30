@@ -36,16 +36,16 @@ def plot_grads(grads,model,gp_term = False):
 
     grad_list = flatten_grads(grads)
 
-    plt.figure(figsize=(20,20))
+    plt.figure(figsize=(20,15))
 
     plt.plot(iters,grad_list)
 
     plt.xlabel('Training Iteration')
 
     if model != 'dcgan':
-        plt.title('{} : Gradient Norm used in Regularization term'.format(model.upper()),fontsize=30)
+        plt.title('{} : Gradient Norm used in Regularization term'.format(model.upper()),fontsize=40)
     else:
-        plt.title('NSGAN : Gradient Norm used in Regularization term',fontsize=30)
+        plt.title('NSGAN : Gradient Norm used in Regularization term',fontsize=40)
 
 
 
@@ -56,19 +56,19 @@ def plot_grads(grads,model,gp_term = False):
 
 
     if model == 'wgan':
-        plt.ylabel('Unregularized Critic Gradient Norm',fontsize=25)
+        plt.ylabel('Unregularized Critic Gradient Norm',fontsize=40)
     elif model == 'wgan-gp':
         plt.ylabel('Critic Gradient Norm')
     elif model == 'dcgan' or model == 'dcgan_sim':
-        plt.ylabel('Unregularized Discriminator Gradient Norm',fontsize=25)
+        plt.ylabel('Discriminator Gradient Norm',fontsize=40)
     else:
-        plt.ylabel('Discriminator Gradient Norm',fontsize=25)
+        plt.ylabel('Discriminator Gradient Norm',fontsize=40)
 
     if os.path.exists('grad_figures') is False:
         os.makedirs('grad_figures')
 
-    plt.tick_params(labelsize=25)
-    plt.xlabel('Training Iteration',fontsize=25)
+    plt.tick_params(labelsize=30)
+    plt.xlabel('Training Iteration',fontsize=40)
 
     if gp_term is False:
         filename = 'grads_{}'.format(str(model)) +'.png'
