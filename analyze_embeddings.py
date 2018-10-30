@@ -5,7 +5,7 @@ from stats import *
 import math
 import pickle
 from argparse import ArgumentParser
-
+import matplotlib.pyplot as plt
 """
 Script to calculate stats/plots for 3-emb experiment
 
@@ -127,7 +127,8 @@ def analyze_embeddings(run,draw=False,log_file=None,dataset='mnist'):
 
         plt.title('MNIST embeddings using Center Loss')
         plt.legend()
-        plt.show()
+        fname_plot = os.path.join(root_dir,'mnist_embs_plot.png')
+        plt.savefig(fname=fname_plot)
 
         return None,None,None,None
 
