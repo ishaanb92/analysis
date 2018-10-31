@@ -11,11 +11,13 @@ Script to calculate stats/plots for metric results
 """
 
 
-def calculate_metric_stats(df,root_dir,draw=False,log_file=None):
+def calculate_metric_stats(df,root_dir,draw=False,log_file=None,dataset='celeba'):
 
     valid_cols = []  # Weird pandas bug -- First column is garbage -- remove it
                      # 2nd column is the original image file path, not needed for numerical analysis
     for model in models:
+        if dataset == 'mnist' and model == 'dcgan_sim':
+            continue
         valid_cols.append(df[model.upper()])
 
     df_concat = pd.concat(valid_cols,axis=1)
@@ -41,6 +43,8 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None):
     pairs = generate_pairs()
 
     for pair in pairs:
+        if (dataset == 'mnist') and ('dcgan_sim' in pair):
+            continue
         if check_homegenity(df_concat[pair[0].upper()],df_concat[pair[1].upper()]) is True:
             if log_file is not None:
                 log_file.write('Distances computed for models {} and {} are homogenous\n'.format(pair[0].upper(),pair[1].upper()))
@@ -50,21 +54,22 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None):
     return mean_dict
 
 
-def analyze_metric(run,draw=False,log_file=None):
+def analyze_metric(run,draw=False,log_file=None,dataset='celeba'):
 
-    root_dir = os.path.join(os.getcwd(),'viz','run_{}'.format(run),'metric')
+    root_dir = os.path.join(os.getcwd(),'viz',dataset,'run_{}'.format(run),'metric')
     if os.path.exists(root_dir) is False:
         os.makedirs(root_dir)
 
-    df = pd.read_csv(os.path.join('/home/fungii/thesis_code/celebA_metric_results','run_{}'.format(run),'gan_distances.csv'))
+    df = pd.read_csv(os.path.join(os.getcwd(),'metric_results',dataset,'run_{}'.format(run),'gan_distances_{}.csv'.format(dataset)))
 
-    return calculate_metric_stats(df=df,root_dir=root_dir,draw=draw,log_file=log_file)
+    return calculate_metric_stats(df=df,root_dir=root_dir,draw=draw,log_file=log_file,dataset=dataset)
 
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--run',type=str,help='Run x of experiment',default='1')
+    parser.add_argument('--dataset',type=str,help='celeba/mnist',default='celeba')
     args = parser.parse_args()
 
-    analyze_metric(run=args.run,draw=True)
+    analyze_metric(run=args.run,draw=True,dataset=args.dataset)
 
 

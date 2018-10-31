@@ -128,6 +128,7 @@ def analyze_embeddings(run,draw=False,log_file=None,dataset='mnist'):
         plt.title('MNIST embeddings using Center Loss')
         plt.legend()
         fname_plot = os.path.join(root_dir,'mnist_embs_plot.png')
+        #TODO : Fix legend placement
         plt.savefig(fname=fname_plot)
 
         return None,None,None,None
