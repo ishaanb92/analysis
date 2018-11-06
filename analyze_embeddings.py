@@ -19,12 +19,12 @@ def build_parser():
     parser.add_argument('--dataset',type=str,help='Dataset to analyze',default='mnist',required=False)
     return parser.parse_args()
 
-def read_file(model,run):
-    file_path = os.path.join(os.getcwd(),'viz','run_{}'.format(run),'{}_embedding'.format(model.upper()),'emb_results_recall.csv')
+def read_file(model,run,dataset='celeba'):
+    file_path = os.path.join(os.getcwd(),'viz','{}'.format(dataset),'run_{}'.format(run),'{}_{}_embedding'.format(model.upper(),dataset.upper()),'emb_results_recall.csv')
     df = pd.read_csv(file_path)
     return df
 
-def concat_df(run):
+def concat_df(run,dataset='celeba'):
     """
     Reads all CSV files containing results of the 3-vec experiment.
     Creates 2 dataframes, one containing all the 'Test' distances
@@ -34,11 +34,17 @@ def concat_df(run):
     test_col_list = []
     train_col_list = []
     gap_col_list = []
+
+    #FIXME
+    if dataset == 'mnist':
+        models.remove('dcgan_sim')
+
     for model in models:
-        df = read_file(model,run)
+        df = read_file(model,run,dataset)
         test_col_list.append(df['Test-Gz Cosine'])
         train_col_list.append(df['Train-Gz Cosine'])
         gap_col_list.append(df['Test-Gz Cosine'].sub(df['Train-Gz Cosine']))
+
 
     df_test = pd.concat(test_col_list,axis=1)
     df_test.columns = models
@@ -131,49 +137,46 @@ def analyze_embeddings(run,draw=False,log_file=None,dataset='mnist'):
         #TODO : Fix legend placement
         plt.savefig(fname=fname_plot)
 
-        return None,None,None,None
+        #TODO : Plot (closest) train/ test / G(z) images for all GANs
 
 
 
+    df_test,df_train,df_gap = concat_df(run,dataset)
 
+    dist_means_test,dist_var_test = calculate_embedding_stats(df_test)
+    dist_means_train,dist_var_train = calculate_embedding_stats(df_train)
 
-    if dataset == 'celeba':
-        df_test,df_train,df_gap = concat_df(run)
+    for model in models:
+        mean_gap = math.fabs(dist_means_test[model]-dist_means_train[model])
+        if log_file is not None:
+            log_file.write('{} :: test-gz mean distance : {} train-gz distance : {} mean gap : {} \n'.format(model.upper(),dist_means_test[model],dist_means_train[model],mean_gap))
+        else:
+            print('{} :: test-gz mean distance : {} train-gz distance : {} mean gap : {}'.format(model.upper(),dist_means_test[model],dist_means_train[model],mean_gap))
 
-        dist_means_test,dist_var_test = calculate_embedding_stats(df_test)
-        dist_means_train,dist_var_train = calculate_embedding_stats(df_train)
+    #Homogenity Checks
+    pairs = generate_pairs()
 
-        for model in models:
-            mean_gap = math.fabs(dist_means_test[model]-dist_means_train[model])
+    for pair in pairs:
+        if check_homegenity(df_test[pair[0]],df_test[pair[1]]) is True:
             if log_file is not None:
-                log_file.write('{} :: test-gz mean distance : {} train-gz distance : {} mean gap : {} \n'.format(model.upper(),dist_means_test[model],dist_means_train[model],mean_gap))
+                log_file.write('Test-Gz distances computed for models {} and {} are homogenous\n'.format(pair[0].upper(),pair[1].upper()))
             else:
-                print('{} :: test-gz mean distance : {} train-gz distance : {} mean gap : {}'.format(model.upper(),dist_means_test[model],dist_means_train[model],mean_gap))
+                print('Test-Gz distances computed for models {} and {} are homogenous'.format(pair[0].upper(),pair[1].upper()))
 
-        #Homogenity Checks
-        pairs = generate_pairs()
-
-        for pair in pairs:
-            if check_homegenity(df_test[pair[0]],df_test[pair[1]]) is True:
-                if log_file is not None:
-                    log_file.write('Test-Gz distances computed for models {} and {} are homogenous\n'.format(pair[0].upper(),pair[1].upper()))
-                else:
-                    print('Test-Gz distances computed for models {} and {} are homogenous'.format(pair[0].upper(),pair[1].upper()))
-
-            if check_homegenity(df_train[pair[0]],df_train[pair[1]]) is True:
-                if log_file is not None:
-                    log_file.write('Train-Gz distances computed for models {} and {} are homogenous\n'.format(pair[0].upper(),pair[1].upper()))
-                else:
-                    print('Train-Gz distances computed for models {} and {} are homogenous'.format(pair[0].upper(),pair[1].upper()))
+        if check_homegenity(df_train[pair[0]],df_train[pair[1]]) is True:
+            if log_file is not None:
+                log_file.write('Train-Gz distances computed for models {} and {} are homogenous\n'.format(pair[0].upper(),pair[1].upper()))
+            else:
+                print('Train-Gz distances computed for models {} and {} are homogenous'.format(pair[0].upper(),pair[1].upper()))
 
 
-        if draw is True:
-            create_box_plot(df=df_test,mode='test',root_dir=root_dir)
-            create_box_plot(df=df_train,mode='train',root_dir=root_dir)
-            create_box_plot(df=df_gap,mode='gap',root_dir=root_dir)
-            for model in models:
-                create_histogram(col=df_test[model],model=model,root_dir=root_dir,mode='test')
-                create_histogram(col=df_train[model],model=model,root_dir=root_dir,mode='train')
+    if draw is True:
+        create_box_plot(df=df_test,mode='test',root_dir=root_dir)
+        create_box_plot(df=df_train,mode='train',root_dir=root_dir)
+        create_box_plot(df=df_gap,mode='gap',root_dir=root_dir)
+        for model in models:
+            create_histogram(col=df_test[model],model=model,root_dir=root_dir,mode='test')
+            create_histogram(col=df_train[model],model=model,root_dir=root_dir,mode='train')
 
 
 
