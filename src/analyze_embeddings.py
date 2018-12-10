@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-import os
+import os,sys
+sys.path.append(os.path.join(os.getcwd(),'src'))
 from stats import *
 import math
 import pickle
@@ -19,28 +20,24 @@ def build_parser():
     parser.add_argument('--dataset',type=str,help='Dataset to analyze',default='mnist',required=False)
     return parser.parse_args()
 
-def read_file(model,run,dataset='celeba'):
-    file_path = os.path.join(os.getcwd(),'viz','{}'.format(dataset),'run_{}'.format(run),'{}_{}_embedding'.format(model.upper(),dataset.upper()),'emb_results_recall.csv')
+def read_csv_file(model,run,dataset='celeba'):
+    file_path = os.path.join(os.getcwd(),'results',dataset,'run_{}'.format(run),'three_vec',model.lower(),'emb_results_recall.csv')
     df = pd.read_csv(file_path)
     return df
 
 def concat_df(run,dataset='celeba'):
     """
     Reads all CSV files containing results of the 3-vec experiment.
-    Creates 2 dataframes, one containing all the 'Test' distances
-    and the other containing 'Train' distances
+    Creates 3 dataframes, one containing all the 'Test' distances,
+    one containing 'Train' distances and one for the 'Gaps'
 
     """
     test_col_list = []
     train_col_list = []
     gap_col_list = []
 
-    #FIXME
-    if dataset == 'mnist':
-        models.remove('dcgan_sim')
-
     for model in models:
-        df = read_file(model,run,dataset)
+        df = read_csv_file(model,run,dataset)
         test_col_list.append(df['Test-Gz Cosine'])
         train_col_list.append(df['Train-Gz Cosine'])
         gap_col_list.append(df['Test-Gz Cosine'].sub(df['Train-Gz Cosine']))
@@ -77,7 +74,7 @@ def calculate_embedding_stats(df):
 
 
 
-def create_box_plot(df,mode='test',root_dir=None):
+def create_box_plot(df,mode='test',out_dir=None):
 
     """
     Takes a dataframe containing the train or test distances (depending on the mode)
@@ -87,55 +84,55 @@ def create_box_plot(df,mode='test',root_dir=None):
 
     kwds = {}
     kwds['patch_artist'] = True
-    generate_box_plot(df,fname=os.path.join(root_dir,'{}_box_plot.png'.format(mode)),mode=mode,kwds=kwds)
+    generate_box_plot(df,fname=os.path.join(out_dir,'{}_box_plot.png'.format(mode)),mode=mode,kwds=kwds)
 
 
-def create_histogram(col,model,root_dir,mode='test'):
-    fname = os.path.join(root_dir,'{}_{}_inp_hist.png'.format(model.upper(),str(mode)))
+def create_histogram(col,model,out_dir,mode='test'):
+    fname = os.path.join(out_dir,'{}_{}_inp_hist.png'.format(model.upper(),str(mode)))
     plot_hist(col=col,fname=fname)
 
 
 def analyze_embeddings(run,draw=False,log_file=None,dataset='mnist'):
 
-    root_dir = os.path.join(os.getcwd(),'viz',dataset,'run_{}'.format(run),'embeddings')
+    out_dir = os.path.join(os.getcwd(),'figures',dataset,'run_{}'.format(run),'embeddings')
 
-    if os.path.exists(root_dir) is False:
-        os.makedirs(root_dir)
+    if os.path.exists(out_dir) is False:
+        os.makedirs(out_dir)
 
     # Code to plot embeddings for MNIST
-    if dataset == 'mnist':
-        fname = os.path.join(root_dir,'mnist_plot_dict.pkl')
-        with open(fname,'rb') as f:
-            try:
-                mnist_plot_dict = pickle.load(f)
-            except:
-                print('Error reading file,exiting')
-                return None,None,None
-        colors = ['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff','#ff00ff', '#990000', '#999900', '#009900', '#009999']
-        groups = [str(i) for i in range(10)]
-        data = []
-        for number in groups:
-            data.append(mnist_plot_dict[int(number)])
+   # if dataset == 'mnist':
+   #     fname = os.path.join(out_dir,'mnist_plot_dict.pkl')
+   #     with open(fname,'rb') as f:
+   #         try:
+   #             mnist_plot_dict = pickle.load(f)
+   #         except:
+   #             print('Error reading file,exiting')
+   #             return None,None,None
+   #     colors = ['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff','#ff00ff', '#990000', '#999900', '#009900', '#009999']
+   #     groups = [str(i) for i in range(10)]
+   #     data = []
+   #     for number in groups:
+   #         data.append(mnist_plot_dict[int(number)])
 
-        data = tuple(data)
-        # Create plot
-        fig = plt.figure()
+   #     data = tuple(data)
+   #     # Create plot
+   #     fig = plt.figure()
 
-        for embs,color,group in zip(data,colors,groups):
-            x= []
-            y = []
+   #     for embs,color,group in zip(data,colors,groups):
+   #         x= []
+   #         y = []
 
-            for emb in embs:
-                x.append(emb[0])
-                y.append(emb[1])
+   #         for emb in embs:
+   #             x.append(emb[0])
+   #             y.append(emb[1])
 
-            plt.plot(x, y,'.',c=color,label=group)
+   #         plt.plot(x, y,'.',c=color,label=group)
 
-        plt.title('MNIST embeddings using Center Loss')
-        plt.legend()
-        fname_plot = os.path.join(root_dir,'mnist_embs_plot.png')
-        #TODO : Fix legend placement
-        plt.savefig(fname=fname_plot)
+   #     plt.title('MNIST embeddings using Center Loss')
+   #     plt.legend()
+   #     fname_plot = os.path.join(out_dir,'mnist_embs_plot.png')
+   #     #TODO : Fix legend placement
+   #     plt.savefig(fname=fname_plot)
 
         #TODO : Plot (closest) train/ test / G(z) images for all GANs
 
@@ -171,12 +168,12 @@ def analyze_embeddings(run,draw=False,log_file=None,dataset='mnist'):
 
 
     if draw is True:
-        create_box_plot(df=df_test,mode='test',root_dir=root_dir)
-        create_box_plot(df=df_train,mode='train',root_dir=root_dir)
-        create_box_plot(df=df_gap,mode='gap',root_dir=root_dir)
+        create_box_plot(df=df_test,mode='test',out_dir=out_dir)
+        create_box_plot(df=df_train,mode='train',out_dir=out_dir)
+        create_box_plot(df=df_gap,mode='gap',out_dir=out_dir)
         for model in models:
-            create_histogram(col=df_test[model],model=model,root_dir=root_dir,mode='test')
-            create_histogram(col=df_train[model],model=model,root_dir=root_dir,mode='train')
+            create_histogram(col=df_test[model],model=model,out_dir=out_dir,mode='test')
+            create_histogram(col=df_train[model],model=model,out_dir=out_dir,mode='train')
 
 
 
