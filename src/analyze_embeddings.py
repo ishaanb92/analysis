@@ -176,11 +176,10 @@ def analyze_embeddings(run,draw=False,log_file=None,dataset='mnist'):
             create_histogram(col=df_train[model],model=model,out_dir=out_dir,mode='train')
 
 
-
-        return dist_means_test,dist_means_train,dist_var_test,dist_var_train
+    return dist_means_test,dist_means_train,dist_var_test,dist_var_train
 
 if __name__ == '__main__':
     args = build_parser()
-    _,_,_,_ = analyze_embeddings(run=args.run,draw=True)
+    _,_,_,_ = analyze_embeddings(run=args.run,draw=True,dataset=args.dataset)
 
 
