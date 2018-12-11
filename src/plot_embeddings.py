@@ -5,6 +5,7 @@ from stats import *
 import pickle
 from argparse import ArgumentParser
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 def build_parser():
     parser = ArgumentParser()
@@ -12,6 +13,16 @@ def build_parser():
     parser.add_argument('--run',type=int,help='Index of run',required=True)
     return parser
 
+
+
+def generate_color_map(n_colors=10):
+    """
+    Generated convinient color-map for the scatter plot
+
+    """
+    x = np.arange(n_colors)
+    ys = [i+x+(i*x)**2 for i in range(n_colors)]
+    return cm.nipy_spectral(np.linspace(0, 1, len(ys)))
 
 
 def plot_embeddings(dataset='mnist',run=1):
@@ -34,7 +45,8 @@ def plot_embeddings(dataset='mnist',run=1):
             print(ex)
 
         # Plotting
-        colors = ['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff','#ff00ff', '#990000', '#999900', '#009900', '#009999']
+        #colors = ['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff','#ff00ff', '#990000', '#999900', '#009900', '#009999']
+        colors=generate_color_map(n_colors=10)
         groups = [str(i) for i in range(10)]
         data = []
         for number in groups:
