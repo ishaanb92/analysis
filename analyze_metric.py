@@ -26,9 +26,9 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None,dataset='celeba'
     for col in df_concat.columns:
         mean_dict[col.lower()] = get_mean(df[col])
         if log_file is not None:
-            log_file.write('{} :: Mean = {} Var = {}\n'.format(col,mean_dict[col.lower()],get_var(df[col])))
+            log_file.write('{} :: Mean = {} Std Dev = {}\n'.format(col,mean_dict[col.lower()],np.sqrt(get_var(df[col]))))
         else:
-            print('{} :: Mean = {} Var = {}'.format(col,mean_dict[col.lower()],get_var(df[col])))
+            print('{} :: Mean = {} Std Dev = {}'.format(col,mean_dict[col.lower()],np.sqrt(get_var(df[col]))))
 
         plot_hist(col=df[col],fname=os.path.join(root_dir,'{}_metric_hist.png'.format(col)),metric=True)
 
