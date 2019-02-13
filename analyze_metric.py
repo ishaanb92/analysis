@@ -16,8 +16,6 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None,dataset='celeba'
     valid_cols = []  # Weird pandas bug -- First column is garbage -- remove it
                      # 2nd column is the original image file path, not needed for numerical analysis
     for model in models:
-        if dataset == 'mnist' and model == 'dcgan_sim':
-            continue
         valid_cols.append(df[model.upper()])
 
     df_concat = pd.concat(valid_cols,axis=1)
@@ -32,7 +30,7 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None,dataset='celeba'
         else:
             print('{} :: Mean = {} Var = {}'.format(col,mean_dict[col.lower()],get_var(df[col])))
 
-        plot_hist(col=df[col],fname=os.path.join(root_dir,'{}_metric_hist.png'.format(col)))
+        plot_hist(col=df[col],fname=os.path.join(root_dir,'{}_metric_hist.png'.format(col)),metric=True)
 
     kwds = {}
     kwds['patch_artist'] = True
@@ -43,8 +41,6 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None,dataset='celeba'
     pairs = generate_pairs()
 
     for pair in pairs:
-        if (dataset == 'mnist') and ('dcgan_sim' in pair):
-            continue
         if check_homegenity(df_concat[pair[0].upper()],df_concat[pair[1].upper()]) is True:
             if log_file is not None:
                 log_file.write('Distances computed for models {} and {} are homogenous\n'.format(pair[0].upper(),pair[1].upper()))

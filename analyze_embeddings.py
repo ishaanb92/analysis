@@ -35,10 +35,6 @@ def concat_df(run,dataset='celeba'):
     train_col_list = []
     gap_col_list = []
 
-    #FIXME
-    if dataset == 'mnist':
-        models.remove('dcgan_sim')
-
     for model in models:
         df = read_file(model,run,dataset)
         test_col_list.append(df['Test-Gz Cosine'])
@@ -136,7 +132,6 @@ def analyze_embeddings(run,draw=False,log_file=None,dataset='mnist'):
         fname_plot = os.path.join(root_dir,'mnist_embs_plot.png')
         #TODO : Fix legend placement
         plt.savefig(fname=fname_plot)
-
         #TODO : Plot (closest) train/ test / G(z) images for all GANs
 
 

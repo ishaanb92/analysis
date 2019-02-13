@@ -42,7 +42,7 @@ def get_var(col):
     """
     return col.var()
 
-def plot_hist(col,fname=None):
+def plot_hist(col,fname=None,metric=True):
     """
     Histogram of values in a column
 
@@ -51,7 +51,10 @@ def plot_hist(col,fname=None):
     col.hist(bins=100)
     plt.xlabel('G(z) - Test Image Cosine Distance')
     plt.ylabel('Count')
-    plt.xlim(0,2)
+    if metric is True:
+        plt.xlim(40,180)
+    else:
+        plt.xlim(0,2)
     plt.savefig(fname)
     plt.close('all')
 
