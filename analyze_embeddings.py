@@ -173,23 +173,32 @@ def analyze_embeddings(run,draw=False,log_file=None,dataset='mnist'):
 
         return dist_means_test,dist_means_train,dist_var_test,dist_var_train
 
+def convert_keys(test_image_path,dataset='celeba'):
+    """
+    This function should NOT FUCKING EXIST
+
+    """
+    test_idx = test_image_path.split('/')[-2]
+    test_dict_key = os.path.join('imagesdb',dataset,'{}'.format(test_idx),'original.jpg')
+    return test_dict_key
+
 def scatter_analysis(run,dataset='celeba'):
-    """
-    Generate scatter plots for test-inp v/s test-train for all models
-    Check for some obvious trends
 
-    Also will serve as a placeholder function for any other additional analysis
-
-    """
-
-    df_test_inp,df_train_inp,df_train_test = concat_df(run=run,dataset=dataset)
-    train_test_angle = np.asarray(df_train_test)
+    root_dir = os.path.join(os.getcwd(),'viz',dataset,'run_{}'.format(run),'embeddings')
+    dict_path = os.path.join(root_dir,'test_image_angle_hist.pkl')
+    with open(dict_path,'rb') as f:
+        test_image_angle_hist = pickle.load(f)
 
     for model in models:
-        outFile = os.path.join(os.getcwd(),'viz','{}'.format(dataset),'run_{}'.format(run),'embeddings',model.lower(),'scatter.png')
-        test_inp_angle = np.asarray(df_test_inp[model])
-        #Do the scatter plot
-        plot_scatter(x=train_test_angle,y=test_inp_angle,fname=outFile,model=model)
+        model_df = read_file(model=model,run=run,dataset=dataset)
+        test_inp_angles = np.asarray(model_df['Test-Gz Cosine'])
+        count_60_deg = []
+        for test_img_path in model_df['Source Image Path']: #Dictionary may not be stored in "order" w.r.t indices
+            test_dict_key = convert_keys(test_img_path,dataset=dataset)
+            count_60_deg.append(test_image_angle_hist[test_dict_key][0])
+        count_60_deg = np.asarray(count_60_deg)
+        fname = os.path.join(root_dir,model,'count_based_scatter.png')
+        plot_scatter(x=count_60_deg,y=test_inp_angles,model=model,fname=fname)
 
 if __name__ == '__main__':
     args = build_parser()

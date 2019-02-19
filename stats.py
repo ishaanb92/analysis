@@ -62,15 +62,13 @@ def plot_hist(col,fname=None,metric=True):
 def plot_scatter(x,y,model,fname):
     plt.figure(figsize=(20,10))
     plt.scatter(x=x,y=y,color='b')
-    ref_points = [pt for pt in range(130)]
-    plt.scatter(x=ref_points,y=ref_points,color='r')
     # Calculate Peason Co-eff between x and y
     coeff,p_value = pearsonr(x=x,y=y)
-    plt.xlabel('Train-Test Angle',fontsize=20)
+    plt.xlabel('#Training Images at 60 degrees',fontsize=20)
     plt.ylabel('Test-Inpainting Angle',fontsize=20)
     plt.title('{0}, correlation co-eff = {1} at p={2}'.format(model.upper(),round(coeff,4),round(p_value,4)),fontsize=30)
-    plt.xlim(0,130)
-    plt.ylim(0,130)
+    #plt.xlim(0,130)
+    #plt.ylim(0,130)
     plt.savefig(fname)
     plt.close('all')
 
