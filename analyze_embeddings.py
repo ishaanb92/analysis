@@ -20,40 +20,36 @@ def build_parser():
     return parser.parse_args()
 
 def read_file(model,run,dataset='celeba'):
-    file_path = os.path.join(os.getcwd(),'viz','{}'.format(dataset),'run_{}'.format(run),'{}_{}_embedding'.format(model.upper(),dataset.upper()),'emb_results_recall.csv')
+    file_path = os.path.join(os.getcwd(),'viz','{}'.format(dataset),'run_{}'.format(run),'embeddings','{}'.format(model.lower()),'emb_results.csv')
     df = pd.read_csv(file_path)
     return df
 
 def concat_df(run,dataset='celeba'):
     """
     Reads all CSV files containing results of the 3-vec experiment.
-    Creates 2 dataframes, one containing all the 'Test' distances
-    and the other containing 'Train' distances
+    Creates 3 dataframes, one containing all the 'Test-Inp' distances,
+    one containing 'Train-Inp' distances and the last containing 'Train-Test' distances
 
     """
-    test_col_list = []
-    train_col_list = []
-    gap_col_list = []
+    test_gz_list = []
+    train_gz_list = []
+
 
     for model in models:
         df = read_file(model,run,dataset)
-        test_col_list.append(df['Test-Gz Cosine'])
-        train_col_list.append(df['Train-Gz Cosine'])
-        gap_col_list.append(df['Test-Gz Cosine'].sub(df['Train-Gz Cosine']))
+        test_gz_list.append(df['Test-Gz Cosine'])
+        train_gz_list.append(df['Train-Gz Cosine'])
 
 
-    df_test = pd.concat(test_col_list,axis=1)
-    df_test.columns = models
+    df_test_inp = pd.concat(test_gz_list,axis=1)
+    df_test_inp.columns = models
 
-    df_train = pd.concat(train_col_list,axis=1)
-    df_train.columns = models
+    df_train_inp = pd.concat(train_gz_list,axis=1)
+    df_train_inp.columns = models
 
-    df_gap = pd.concat(gap_col_list,axis=1)
-    df_gap.columns = models
+    df_train_test = df['Train-Test Cosine'] #For all models, the train-test coloumn should be the same! => No merge required (Did a sanity double check)
 
-
-
-    return df_test,df_train,df_gap
+    return df_test_inp,df_train_inp,df_train_test
 
 
 
@@ -177,8 +173,27 @@ def analyze_embeddings(run,draw=False,log_file=None,dataset='mnist'):
 
         return dist_means_test,dist_means_train,dist_var_test,dist_var_train
 
+def scatter_analysis(run,dataset='celeba'):
+    """
+    Generate scatter plots for test-inp v/s test-train for all models
+    Check for some obvious trends
+
+    Also will serve as a placeholder function for any other additional analysis
+
+    """
+
+    df_test_inp,df_train_inp,df_train_test = concat_df(run=run,dataset=dataset)
+    train_test_angle = np.asarray(df_train_test)
+
+    for model in models:
+        outFile = os.path.join(os.getcwd(),'viz','{}'.format(dataset),'run_{}'.format(run),'embeddings',model.lower(),'scatter.png')
+        test_inp_angle = np.asarray(df_test_inp[model])
+        #Do the scatter plot
+        plot_scatter(x=train_test_angle,y=test_inp_angle,fname=outFile,model=model)
+
 if __name__ == '__main__':
     args = build_parser()
-    _,_,_,_ = analyze_embeddings(run=args.run,draw=True)
+    #_,_,_,_ = analyze_embeddings(run=args.run,draw=True,dataset=args.dataset)
+    scatter_analysis(run=args.run,dataset=args.dataset)
 
 
