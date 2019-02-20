@@ -195,7 +195,7 @@ def scatter_analysis(run,dataset='celeba'):
         count_60_deg = []
         for test_img_path in model_df['Source Image Path']: #Dictionary may not be stored in "order" w.r.t indices
             test_dict_key = convert_keys(test_img_path,dataset=dataset)
-            count_60_deg.append(test_image_angle_hist[test_dict_key][0])
+            count_60_deg.append(test_image_angle_hist[test_dict_key])
         count_60_deg = np.asarray(count_60_deg)
         fname = os.path.join(root_dir,model,'count_based_scatter.png')
         plot_scatter(x=count_60_deg,y=test_inp_angles,model=model,fname=fname)
