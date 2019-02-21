@@ -20,6 +20,7 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None,dataset='celeba'
 
     df_concat = pd.concat(valid_cols,axis=1)
 
+    #df_concat.columns = models_xticks
     mean_dict = {}
 
     # Mean/Var
@@ -34,20 +35,21 @@ def calculate_metric_stats(df,root_dir,draw=False,log_file=None,dataset='celeba'
 
     kwds = {}
     kwds['patch_artist'] = True
+    df_concat.columns = [model.upper() for model in models_xticks]
     if draw is True:
         generate_box_plot(df=df_concat,fname=os.path.join(root_dir,'box_plot.png'),kwds=kwds)
 
     # Homogenity tests
-    pairs = generate_pairs()
+   # pairs = generate_pairs()
 
-    for pair in pairs:
-        if check_homegenity(df_concat[pair[0].upper()],df_concat[pair[1].upper()]) is True:
-            if log_file is not None:
-                log_file.write('Distances computed for models {} and {} are homogenous\n'.format(pair[0].upper(),pair[1].upper()))
-            else:
-                print('Distances computed for models {} and {} are homogenous'.format(pair[0].upper(),pair[1].upper()))
+   # for pair in pairs:
+   #     if check_homegenity(df_concat[pair[0].upper()],df_concat[pair[1].upper()]) is True:
+   #         if log_file is not None:
+   #             log_file.write('Distances computed for models {} and {} are homogenous\n'.format(pair[0].upper(),pair[1].upper()))
+   #         else:
+   #             print('Distances computed for models {} and {} are homogenous'.format(pair[0].upper(),pair[1].upper()))
 
-    return mean_dict
+   # return mean_dict
 
 
 def analyze_metric(run,draw=False,log_file=None,dataset='celeba'):
