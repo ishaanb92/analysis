@@ -189,7 +189,7 @@ def scatter_analysis(run,dataset='celeba'):
     with open(dict_path,'rb') as f:
         test_image_angle_hist = pickle.load(f)
 
-    for model in models:
+    for model,idx in zip(models,range(len(models))):
         model_df = read_file(model=model,run=run,dataset=dataset)
         test_inp_angles = np.asarray(model_df['Test-Gz Cosine'])
         count_60_deg = []
@@ -198,7 +198,8 @@ def scatter_analysis(run,dataset='celeba'):
             count_60_deg.append(test_image_angle_hist[test_dict_key])
         count_60_deg = np.asarray(count_60_deg)
         fname = os.path.join(root_dir,model,'count_based_scatter.png')
-        plot_scatter(x=count_60_deg,y=test_inp_angles,model=model,fname=fname)
+        corr,p_value,slope = plot_scatter(x=count_60_deg,y=test_inp_angles,model=models_xticks[idx],fname=fname)#So that the correct name appears on the figure
+        print('Model : {} Correlation : {} p-value : {} Slope of fit: {}'.format(model,round(corr,4),round(p_value,6),slope))
 
 if __name__ == '__main__':
     args = build_parser()

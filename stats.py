@@ -8,7 +8,7 @@ from scipy.stats import levene
 from scipy.stats import ttest_ind
 from scipy.stats import mannwhitneyu
 from scipy.stats import pearsonr
-
+from numpy.polynomial.polynomial import polyfit
 """
 Python module to calculate statistics for all experiments
 
@@ -62,6 +62,9 @@ def plot_hist(col,fname=None,metric=True):
 def plot_scatter(x,y,model,fname):
     plt.figure(figsize=(20,10))
     plt.scatter(x=x,y=y,color='b')
+    #Fit a line through the scatter
+    b, m = polyfit(x, y, deg = 1)
+    plt.plot(x,b+m*x,'-',color='r')
     # Calculate Peason Co-eff between x and y
     coeff,p_value = pearsonr(x=x,y=y)
     plt.xlabel('#Training Images <= 60 degrees',fontsize=20)
@@ -71,6 +74,7 @@ def plot_scatter(x,y,model,fname):
     #plt.ylim(0,130)
     plt.savefig(fname)
     plt.close('all')
+    return coeff,p_value,m
 
 def generate_box_plot(df,fname,mode=None,kwds=None):
     """
@@ -87,7 +91,7 @@ def generate_box_plot(df,fname,mode=None,kwds=None):
             patch.set_facecolor(color)
 
     if mode == None:
-        ax.set_title('Box plot for Inpainting-Original embedding cosine distances',fontsize=30)
+        ax.set_title('Box plot for Inpainting-Original embedding central angles',fontsize=30)
     else:
         if mode == 'gap':
             ax.set_title('Box Plot for gap between test and train distances',fontsize=30)
@@ -96,7 +100,7 @@ def generate_box_plot(df,fname,mode=None,kwds=None):
 
     ax.set_xlabel('GAN Models',fontsize=25)
 
-    ax.set_ylabel('Cosine Distance',fontsize=25)
+    ax.set_ylabel('Central Angle',fontsize=25)
     ax.xaxis.set_tick_params(labelsize=25)
     ax.yaxis.set_tick_params(labelsize=25)
 
